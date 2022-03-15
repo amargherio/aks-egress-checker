@@ -1,0 +1,44 @@
+{
+    "networkRules": [
+        {
+            "name": "api-server-udp-1194",
+            "dst": "*",
+            "protocol": "udp",
+            "port": "1194",
+            "use": "For tunneled secure communication between the nodes and the control plane. This is not required for private clusters.",
+            "requiredPrivate": false
+        },
+        {
+            "name": "api-server-tcp-9000",
+            "dst": "*",
+            "protocol": "tcp",
+            "port": "9000",
+            "use": "For tunneled secure communication between the nodes and the control plane. This is not required for private clusters.",
+            "requiredPrivate": false
+        },
+        {
+            "name": "ntp",
+            "dst": "ntp.ubuntu.com",
+            "protocol": "udp",
+            "port": "123",
+            "use": "Required for Network Time Protocol (NTP) time synchronization on Linux nodes.",
+            "requiredPrivate": true
+        },
+        {
+            "name": "custom-dns",
+            "dst": "*",
+            "protocol": "udp",
+            "port": "53",
+            "use": "If you're using custom DNS servers, you must ensure they're accessible by the cluster nodes.",
+            "requiredPrivate": true
+        },
+        {
+            "name": "api-server-https-443",
+            "dst": "*",
+            "protocol": "tcp",
+            "port": "443",
+            "use": "Required if running pods/deployments that access the API server, those pods/deployments would use the API IP. This is not required for private clusters.",
+            "requiredPrivate": false
+        }
+    ]
+}
