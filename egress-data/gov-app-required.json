@@ -1,18 +1,9 @@
 {
-    "enabled": false,
+    "enabled": true,
     "rules": [
         {
             "name": "api-server-https-443",
-            "dst": "{ccp-id}.hcp.{location}.cx.prod.azmk8s.cn",
-            "protocol": "https",
-            "port": "443",
-            "use": "Required for Node <-> API server communication. Replace <location> with the region where your AKS cluster is deployed.",
-            "requiredPrivate": true,
-            "enabled": false
-        },
-        {
-            "name": "api-server-tun-https-443",
-            "dst": "{ccp-id}.tun.{location}.cx.prod.azmk8s.cn",
+            "dst": "{ccp-id}.hcp.{location}.cx.aks.containerservice.azure.us",
             "protocol": "https",
             "port": "443",
             "use": "Required for Node <-> API server communication. Replace <location> with the region where your AKS cluster is deployed.",
@@ -26,7 +17,7 @@
             "port": "443",
             "use": "Required to access images in Microsoft Container Registry (MCR). This registry contains first-party images/charts (for example, coreDNS, etc.). These images are required for the correct creation and functioning of the cluster, including scale and upgrade operations.",
             "requiredPrivate": true,
-            "enabled": false
+            "enabled": true
         },
         {
             "name": "mcr-data-https",
@@ -39,21 +30,21 @@
         },
         {
             "name": "azure-management",
-            "dst": "management.chinacloudapi.cn",
+            "dst": "management.usgovcloudapi.net",
             "protocol": "https",
             "port": "443",
             "use": "Required for Kubernetes operations against the Azure API.",
             "requiredPrivate": true,
-            "enabled": false
+            "enabled": true
         },
         {
             "name": "aad-login",
-            "dst": "login.chinacloudapi.cn",
+            "dst": "login.microsoftonline.us",
             "protocol": "https",
             "port": "443",
             "use": "Required for Azure Active Directory authentication.",
             "requiredPrivate": true,
-            "enabled": false
+            "enabled": true
         },
         {
             "name": "ms-packages",
@@ -62,16 +53,16 @@
             "port": "443",
             "use": "This address is the Microsoft packages repository used for cached apt-get operations. Example packages include Moby, PowerShell, and Azure CLI.",
             "requiredPrivate": true,
-            "enabled": false
+            "enabled": true
         },
         {
             "name": "acs-mirror",
-            "dst": "{id}.azk8s.cn",
+            "dst": "acs-mirror.azureedge.net",
             "protocol": "https",
             "port": "443",
             "use": "This address is for the repository required to download and install required binaries like kubenet and Azure CNI.",
             "requiredPrivate": true,
-            "enabled": false
+            "enabled": true
         }
     ]
 }

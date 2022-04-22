@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    purpose: "network-troubleshooting"
+  name: "aks-egress-checker"
+  namespace: "kube-system"
+spec:
+  containers:
+    - image: "<image-url>:<tag>"
+      imagePullPolicy: Always
+      name: aks-egress-checker

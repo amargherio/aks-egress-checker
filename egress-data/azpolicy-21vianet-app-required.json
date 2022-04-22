@@ -1,0 +1,23 @@
+{
+    "enabled": true,
+    "rules": [
+        {
+            "name": "data-policy",
+            "dst": "data.policy.azure.cn",
+            "protocol": "https",
+            "port": "443",
+            "use": "This address is used to pull Kubernetes policies and to report cluster compliance status to the policy service.",
+            "requiredPrivate": true,
+            "enabled": true
+        },
+        {
+            "name": "store-policy",
+            "dst": "store.policy.azure.cn",
+            "protocol": "https",
+            "port": "443",
+            "use": "This address is used to pull the Gatekeeper artifacts of built-in policies.",
+            "requiredPrivate": true,
+            "enabled": true
+        }
+    ]
+}

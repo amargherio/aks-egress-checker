@@ -1,0 +1,50 @@
+{
+    "enabled": false,
+    "rules": [
+        {
+            "name": "oneget-cdn",
+            "dst": "onegetcdn.azureedge.net",
+            "protocol": "https",
+            "port": "443",
+            "use": "To install Windows-related binaries.",
+            "requiredPrivate": true,
+            "enabled": true
+        },
+        {
+            "name": "microsoft-go",
+            "dst": "go.microsoft.com",
+            "protocol": "https",
+            "port": "443",
+            "use": "To install Windows-related binaries.",
+            "requiredPrivate": true,
+            "enabled": true
+        },
+        {
+            "name": "mp-microsoft",
+            "dst": "{id}.mp.microsoft.com",
+            "protocol": "http",
+            "port": "80",
+            "use": "To install Windows-related binaries.",
+            "requiredPrivate": true,
+            "enabled": false
+        },
+        {
+            "name": "msft-connect-test",
+            "dst": "www.msftconnecttest.com",
+            "protocol": "http",
+            "port": "80",
+            "use": "To install Windows-related binaries.",
+            "requiredPrivate": true,
+            "enabled": true
+        },
+        {
+            "name": "ctldl-windowsupdate",
+            "dst": "ctldl.windowsupdate.com",
+            "protocol": "http",
+            "port": "80",
+            "use": "To install Windows-related binaries.",
+            "requiredPrivate": true,
+            "enabled": true
+        }
+    ]
+}

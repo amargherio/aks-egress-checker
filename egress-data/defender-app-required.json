@@ -1,0 +1,32 @@
+{
+    "enabled": false,
+    "rules": [
+        {
+            "name": "aad-login",
+            "dst": "login.microsoftonline.com",
+            "protocol": "https",
+            "port": "443",
+            "use": "Required for Active Directory authentication.",
+            "requiredPrivate": true,
+            "enabled": true
+        },
+        {
+            "name": "ods-opinsights",
+            "dst": "{id}.ods.opinsights.azure.com",
+            "protocol": "https",
+            "port": "443",
+            "use": "Required for Microsoft Defender to upload security events to the cloud.",
+            "requiredPrivate": true,
+            "enabled": false
+        },
+        {
+            "name": "oms-opinsights",
+            "dst": "{id}.oms.opinsights.azure.com",
+            "protocol": "https",
+            "port": "443",
+            "use": "Required to authenticate with Log Analytics workspaces.",
+            "requiredPrivate": true,
+            "enabled": false
+        }
+    ]
+}
