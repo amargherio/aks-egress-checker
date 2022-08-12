@@ -6,8 +6,8 @@
             "dst": "{ccp_id}.hcp.{region}.azmk8s.io",
             "protocol": "https",
             "port": "443",
-            "use": "Required for Node <-> API server communication. Replace <location> with the region where your AKS cluster is deployed. This is required for clusters with konnectivity-agent enabled. Konnectivity also uses Application-Layer Protocol Negotiation (ALPN) to communicate between agent and server. Blocking or rewriting the ALPN extension will cause a failure. This is not required for private clusters",
-            "requiredPrivate": false,
+            "use": "Required for Node <-> API server communication. Replace <location> with the region where your AKS cluster is deployed.",
+            "requiredPrivate": true,
             "enabled": false
         },
         {

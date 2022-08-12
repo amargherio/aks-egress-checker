@@ -6,7 +6,7 @@
             "dst": "*",
             "protocol": "udp",
             "port": "1194",
-            "use": "For tunneled secure communication between the nodes and the control plane. This is not required for private clusters or for clusters with konnectivity-agent enabled.",
+            "use": "For tunneled secure communication between the nodes and the control plane. This is not required for private clusters.",
             "requiredPrivate": false,
             "enabled": true
         },
@@ -15,7 +15,7 @@
             "dst": "*",
             "protocol": "tcp",
             "port": "9000",
-            "use": "For tunneled secure communication between the nodes and the control plane. This is not required for private clusters or for clusters with konnectivity-agent enabled.",
+            "use": "For tunneled secure communication between the nodes and the control plane. This is not required for private clusters.",
             "requiredPrivate": false,
             "enabled": true
         },
@@ -24,7 +24,7 @@
             "dst": "ntp.ubuntu.com",
             "protocol": "udp",
             "port": "123",
-            "use": "Required for Network Time Protocol (NTP) time synchronization on Linux nodes. This is not required for nodes provisioned after March 2021.",
+            "use": "Required for Network Time Protocol (NTP) time synchronization on Linux nodes.",
             "requiredPrivate": true,
             "enabled": true
         },

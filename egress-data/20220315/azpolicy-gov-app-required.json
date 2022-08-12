@@ -3,7 +3,7 @@
     "rules": [
         {
             "name": "data-policy",
-            "dst": "data.policy.azure.cn",
+            "dst": "data.policy.azure.us",
             "protocol": "https",
             "port": "443",
             "use": "This address is used to pull Kubernetes policies and to report cluster compliance status to the policy service.",
@@ -12,7 +12,7 @@
         },
         {
             "name": "store-policy",
-            "dst": "store.policy.azure.cn",
+            "dst": "store.policy.azure.us",
             "protocol": "https",
             "port": "443",
             "use": "This address is used to pull the Gatekeeper artifacts of built-in policies.",
