@@ -20,8 +20,8 @@
             "enabled": true
         },
         {
-            "name": "docker-apt",
-            "dst": "apt.dockerproject.org",
+            "name": "docker-download",
+            "dst": "download.docker.com",
             "protocol": "https",
             "port": "443",
             "use": "This address is used for correct driver installation and operation on GPU-based nodes.",
