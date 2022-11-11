@@ -1,0 +1,739 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/part-of: aks-egress-checker
+  name: egress-check-data
+  namespace: kube-system
+spec:
+  data:
+    20220315-egress: |-
+      {
+          "egressVersion": "20220315",
+          "name": "20220315-aks-egress",
+          "groups": [
+              {
+                  "enabled": true,
+                  "name": "global-net-required",
+                  "rules": [
+                      {
+                          "name": "api-server-udp-1194",
+                          "dst": "*",
+                          "protocol": "udp",
+                          "port": "1194",
+                          "description": "For tunneled secure communication between the nodes and the control plane. This is not required for private clusters.",
+                          "requiredPrivate": false,
+                          "enabled": true
+                      },
+                      {
+                          "name": "api-server-tcp-9000",
+                          "dst": "*",
+                          "protocol": "tcp",
+                          "port": "9000",
+                          "description": "For tunneled secure communication between the nodes and the control plane. This is not required for private clusters.",
+                          "requiredPrivate": false,
+                          "enabled": true
+                      },
+                      {
+                          "name": "ntp",
+                          "dst": "ntp.ubuntu.com",
+                          "protocol": "udp",
+                          "port": "123",
+                          "description": "Required for Network Time Protocol (NTP) time synchronization on Linux nodes.",
+                          "requiredPrivate": true,
+                          "enabled": true
+                      },
+                      {
+                          "name": "custom-dns",
+                          "dst": "*",
+                          "protocol": "udp",
+                          "port": "53",
+                          "description": "If you're using custom DNS servers, you must ensure they're accessible by the cluster nodes.",
+                          "requiredPrivate": true,
+                          "enabled": true
+                      },
+                      {
+                          "name": "api-server-https-443",
+                          "dst": "*",
+                          "protocol": "tcp",
+                          "port": "443",
+                          "description": "Required if running pods/deployments that access the API server, those pods/deployments would use the API IP. This is not required for private clusters.",
+                          "requiredPrivate": false,
+                          "enabled": true
+                      }
+                  ]
+              },
+              {
+                  "enabled": true,
+                  "name": "global-app-required",
+                  "rules": [
+                      {
+                          "name": "api-server-https-443",
+                          "dst": "{ccp-id}.hcp.{location}.cx.aks.containerservice.azure.us",
+                          "protocol": "https",
+                          "port": "443",
+                          "description": "Required for Node <-> API server communication. Replace <location> with the region where your AKS cluster is deployed.",
+                          "requiredPrivate": true,
+                          "enabled": false
+                      },
+                      {
+                          "name": "mcr-https",
+                          "dst": "mcr.microsoft.com",
+                          "protocol": "https",
+                          "port": "443",
+                          "description": "Required to access images in Microsoft Container Registry (MCR). This registry contains first-party images/charts (for example, coreDNS, etc.). These images are required for the correct creation and functioning of the cluster, including scale and upgrade operations.",
+                          "requiredPrivate": true,
+                          "enabled": true
+                      },
+                      {
+                          "name": "mcr-data-https",
+                          "dst": "{endpoint}.data.mcr.microsoft.com",
+                          "protocol": "https",
+                          "port": "443",
+                          "description": "Required for MCR storage backed by the Azure content delivery network (CDN).",
+                          "requiredPrivate": true,
+                          "enabled": false
+                      },
+                      {
+                          "name": "azure-management",
+                          "dst": "management.usgovcloudapi.net",
+                          "protocol": "https",
+                          "port": "443",
+                          "description": "Required for Kubernetes operations against the Azure API.",
+                          "requiredPrivate": true,
+                          "enabled": true
+                      },
+                      {
+                          "name": "aad-login",
+                          "dst": "login.microsoftonline.us",
+                          "protocol": "https",
+                          "port": "443",
+                          "description": "Required for Azure Active Directory authentication.",
+                          "requiredPrivate": true,
+                          "enabled": true
+                      },
+                      {
+                          "name": "ms-packages",
+                          "dst": "packages.microsoft.com",
+                          "protocol": "https",
+                          "port": "443",
+                          "description": "This address is the Microsoft packages repository used for cached apt-get operations. Example packages include Moby, PowerShell, and Azure CLI.",
+                          "requiredPrivate": true,
+                          "enabled": true
+                      },
+                      {
+                          "name": "acs-mirror",
+                          "dst": "acs-mirror.azureedge.net",
+                          "protocol": "https",
+                          "port": "443",
+                          "description": "This address is for the repository required to download and install required binaries like kubenet and Azure CNI.",
+                          "requiredPrivate": true,
+                          "enabled": true
+                      }
+                  ]
+              },
+              {
+                  "enabled": true,
+                  "name": "global-app-optional",
+                  "rules": [
+                      {
+                          "name": "ubuntu-security",
+                          "dst": "security.ubuntu.com",
+                          "protocol": "http",
+                          "port": "80",
+                          "description": "This address lets the Linux cluster nodes download the required security patches and updates.",
+                          "requiredPrivate": true,
+                          "enabled": true
+                      },
+                      {
+                          "name": "ubuntu-archive",
+                          "dst": "azure.archive.ubuntu.com",
+                          "protocol": "http",
+                          "port": "80",
+                          "description": "This address lets the Linux cluster nodes download the required security patches and updates.",
+                          "requiredPrivate": true,
+                          "enabled": true
+                      },
+                      {
+                          "name": "ubuntu-changelogs",
+                          "dst": "changelogs.ubuntu.com",
+                          "protocol": "http",
+                          "port": "80",
+                          "description": "This address lets the Linux cluster nodes download the required security patches and updates.",
+                          "requiredPrivate": true,
+                          "enabled": true
+                      }
+                  ]
+              },
+              {
+                  "enabled": false,
+                  "name": "21vianet-net-required",
+                  "rules": [
+                      {
+                          "name": "api-server-udp-1194",
+                          "dst": "*",
+                          "protocol": "udp",
+                          "port": "1194",
+                          "description": "For tunneled secure communication between the nodes and the control plane. This is not required for private clusters.",
+                          "requiredPrivate": false,
+                          "enabled": false
+                      },
+                      {
+                          "name": "api-server-tcp-9000",
+                          "dst": "*",
+                          "protocol": "tcp",
+                          "port": "9000",
+                          "description": "For tunneled secure communication between the nodes and the control plane. This is not required for private clusters.",
+                          "requiredPrivate": false,
+                          "enabled": false
+                      },
+                      {
+                          "name": "ntp",
+                          "dst": "ntp.ubuntu.com",
+                          "protocol": "udp",
+                          "port": "123",
+                          "description": "Required for Network Time Protocol (NTP) time synchronization on Linux nodes.",
+                          "requiredPrivate": true,
+                          "enabled": false
+                      },
+                      {
+                          "name": "custom-dns",
+                          "dst": "*",
+                          "protocol": "udp",
+                          "port": "53",
+                          "description": "If you're using custom DNS servers, you must ensure they're accessible by the cluster nodes.",
+                          "requiredPrivate": true,
+                          "enabled": false
+                      },
+                      {
+                          "name": "api-server-https-443",
+                          "dst": "*",
+                          "protocol": "tcp",
+                          "port": "443",
+                          "description": "Required if running pods/deployments that access the API server, those pods/deployments would use the API IP. This is not required for private clusters.",
+                          "requiredPrivate": false,
+                          "enabled": false
+                      }
+                  ]
+              },
+              {
+                  "enabled": false,
+                  "name": "21vianet-app-required",
+                  "rules": [
+                      {
+                          "name": "api-server-https-443",
+                          "dst": "{ccp-id}.hcp.{location}.cx.prod.azmk8s.cn",
+                          "protocol": "https",
+                          "port": "443",
+                          "description": "Required for Node <-> API server communication. Replace <location> with the region where your AKS cluster is deployed.",
+                          "requiredPrivate": true,
+                          "enabled": false
+                      },
+                      {
+                          "name": "api-server-tun-https-443",
+                          "dst": "{ccp-id}.tun.{location}.cx.prod.azmk8s.cn",
+                          "protocol": "https",
+                          "port": "443",
+                          "description": "Required for Node <-> API server communication. Replace <location> with the region where your AKS cluster is deployed.",
+                          "requiredPrivate": true,
+                          "enabled": false
+                      },
+                      {
+                          "name": "mcr-https",
+                          "dst": "mcr.microsoft.com",
+                          "protocol": "https",
+                          "port": "443",
+                          "description": "Required to access images in Microsoft Container Registry (MCR). This registry contains first-party images/charts (for example, coreDNS, etc.). These images are required for the correct creation and functioning of the cluster, including scale and upgrade operations.",
+                          "requiredPrivate": true,
+                          "enabled": false
+                      },
+                      {
+                          "name": "mcr-data-https",
+                          "dst": "{endpoint}.data.mcr.microsoft.com",
+                          "protocol": "https",
+                          "port": "443",
+                          "description": "Required for MCR storage backed by the Azure content delivery network (CDN).",
+                          "requiredPrivate": true,
+                          "enabled": false
+                      },
+                      {
+                          "name": "azure-management",
+                          "dst": "management.chinacloudapi.cn",
+                          "protocol": "https",
+                          "port": "443",
+                          "description": "Required for Kubernetes operations against the Azure API.",
+                          "requiredPrivate": true,
+                          "enabled": false
+                      },
+                      {
+                          "name": "aad-login",
+                          "dst": "login.chinacloudapi.cn",
+                          "protocol": "https",
+                          "port": "443",
+                          "description": "Required for Azure Active Directory authentication.",
+                          "requiredPrivate": true,
+                          "enabled": false
+                      },
+                      {
+                          "name": "ms-packages",
+                          "dst": "packages.microsoft.com",
+                          "protocol": "https",
+                          "port": "443",
+                          "description": "This address is the Microsoft packages repository used for cached apt-get operations. Example packages include Moby, PowerShell, and Azure CLI.",
+                          "requiredPrivate": true,
+                          "enabled": false
+                      },
+                      {
+                          "name": "acs-mirror",
+                          "dst": "{id}.azk8s.cn",
+                          "protocol": "https",
+                          "port": "443",
+                          "description": "This address is for the repository required to download and install required binaries like kubenet and Azure CNI.",
+                          "requiredPrivate": true,
+                          "enabled": false
+                      }
+                  ]
+              },
+              {
+                  "enabled": true,
+                  "name": "usgov-net-required",
+                  "rules": [
+                      {
+                          "name": "api-server-udp-1194",
+                          "dst": "*",
+                          "protocol": "udp",
+                          "port": "1194",
+                          "description": "For tunneled secure communication between the nodes and the control plane. This is not required for private clusters.",
+                          "requiredPrivate": false,
+                          "enabled": false
+                      },
+                      {
+                          "name": "api-server-tcp-9000",
+                          "dst": "*",
+                          "protocol": "tcp",
+                          "port": "9000",
+                          "description": "For tunneled secure communication between the nodes and the control plane. This is not required for private clusters.",
+                          "requiredPrivate": false,
+                          "enabled": false
+                      },
+                      {
+                          "name": "ntp",
+                          "dst": "ntp.ubuntu.com",
+                          "protocol": "udp",
+                          "port": "123",
+                          "description": "Required for Network Time Protocol (NTP) time synchronization on Linux nodes.",
+                          "requiredPrivate": true,
+                          "enabled": true
+                      },
+                      {
+                          "name": "custom-dns",
+                          "dst": "*",
+                          "protocol": "udp",
+                          "port": "53",
+                          "description": "If you're using custom DNS servers, you must ensure they're accessible by the cluster nodes.",
+                          "requiredPrivate": true,
+                          "enabled": true
+                      },
+                      {
+                          "name": "api-server-https-443",
+                          "dst": "*",
+                          "protocol": "tcp",
+                          "port": "443",
+                          "description": "Required if running pods/deployments that access the API server, those pods/deployments would use the API IP. This is not required for private clusters.",
+                          "requiredPrivate": false,
+                          "enabled": true
+                      }
+                  ]
+              },
+              {
+                  "enabled": true,
+                  "name": "usgov-app-required",
+                  "rules": [
+                      {
+                          "name": "api-server-https-443",
+                          "dst": "{ccp-id}.hcp.{location}.cx.aks.containerservice.azure.us",
+                          "protocol": "https",
+                          "port": "443",
+                          "description": "Required for Node <-> API server communication. Replace <location> with the region where your AKS cluster is deployed.",
+                          "requiredPrivate": true,
+                          "enabled": false
+                      },
+                      {
+                          "name": "mcr-https",
+                          "dst": "mcr.microsoft.com",
+                          "protocol": "https",
+                          "port": "443",
+                          "description": "Required to access images in Microsoft Container Registry (MCR). This registry contains first-party images/charts (for example, coreDNS, etc.). These images are required for the correct creation and functioning of the cluster, including scale and upgrade operations.",
+                          "requiredPrivate": true,
+                          "enabled": true
+                      },
+                      {
+                          "name": "mcr-data-https",
+                          "dst": "{endpoint}.data.mcr.microsoft.com",
+                          "protocol": "https",
+                          "port": "443",
+                          "description": "Required for MCR storage backed by the Azure content delivery network (CDN).",
+                          "requiredPrivate": true,
+                          "enabled": false
+                      },
+                      {
+                          "name": "azure-management",
+                          "dst": "management.usgovcloudapi.net",
+                          "protocol": "https",
+                          "port": "443",
+                          "description": "Required for Kubernetes operations against the Azure API.",
+                          "requiredPrivate": true,
+                          "enabled": true
+                      },
+                      {
+                          "name": "aad-login",
+                          "dst": "login.microsoftonline.us",
+                          "protocol": "https",
+                          "port": "443",
+                          "description": "Required for Azure Active Directory authentication.",
+                          "requiredPrivate": true,
+                          "enabled": true
+                      },
+                      {
+                          "name": "ms-packages",
+                          "dst": "packages.microsoft.com",
+                          "protocol": "https",
+                          "port": "443",
+                          "description": "This address is the Microsoft packages repository used for cached apt-get operations. Example packages include Moby, PowerShell, and Azure CLI.",
+                          "requiredPrivate": true,
+                          "enabled": true
+                      },
+                      {
+                          "name": "acs-mirror",
+                          "dst": "acs-mirror.azureedge.net",
+                          "protocol": "https",
+                          "port": "443",
+                          "description": "This address is for the repository required to download and install required binaries like kubenet and Azure CNI.",
+                          "requiredPrivate": true,
+                          "enabled": true
+                      }
+                  ]
+              },
+              {
+                  "enabled": true,
+                  "name": "gpu-app-required",
+                  "rules": [
+                      {
+                          "name": "nvidia-github",
+                          "dst": "nvidia.github.io",
+                          "protocol": "https",
+                          "port": "443",
+                          "description": "This address is used for correct driver installation and operation on GPU-based nodes.",
+                          "requiredPrivate": true,
+                          "enabled": true
+                      },
+                      {
+                          "name": "nvidia-us-download",
+                          "dst": "us.download.nvidia.com",
+                          "protocol": "https",
+                          "port": "443",
+                          "description": "This address is used for correct driver installation and operation on GPU-based nodes.",
+                          "requiredPrivate": true,
+                          "enabled": true
+                      },
+                      {
+                          "name": "docker-apt",
+                          "dst": "apt.dockerproject.org",
+                          "protocol": "https",
+                          "port": "443",
+                          "description": "This address is used for correct driver installation and operation on GPU-based nodes.",
+                          "requiredPrivate": true,
+                          "enabled": true
+                      }
+                  ]
+              },
+              {
+                  "enabled": false,
+                  "name": "windows-app-required",
+                  "rules": [
+                      {
+                          "name": "oneget-cdn",
+                          "dst": "onegetcdn.azureedge.net",
+                          "protocol": "https",
+                          "port": "443",
+                          "description": "To install Windows-related binaries.",
+                          "requiredPrivate": true,
+                          "enabled": true
+                      },
+                      {
+                          "name": "microsoft-go",
+                          "dst": "go.microsoft.com",
+                          "protocol": "https",
+                          "port": "443",
+                          "description": "To install Windows-related binaries.",
+                          "requiredPrivate": true,
+                          "enabled": true
+                      },
+                      {
+                          "name": "mp-microsoft",
+                          "dst": "{id}.mp.microsoft.com",
+                          "protocol": "http",
+                          "port": "80",
+                          "description": "To install Windows-related binaries.",
+                          "requiredPrivate": true,
+                          "enabled": false
+                      },
+                      {
+                          "name": "msft-connect-test",
+                          "dst": "www.msftconnecttest.com",
+                          "protocol": "http",
+                          "port": "80",
+                          "description": "To install Windows-related binaries.",
+                          "requiredPrivate": true,
+                          "enabled": true
+                      },
+                      {
+                          "name": "ctldl-windowsupdate",
+                          "dst": "ctldl.windowsupdate.com",
+                          "protocol": "http",
+                          "port": "80",
+                          "description": "To install Windows-related binaries.",
+                          "requiredPrivate": true,
+                          "enabled": true
+                      }
+                  ]
+              },
+              {
+                  "enabled": false,
+                  "name": "azmonitor-net-required",
+                  "rules": [
+                      {
+                          "name": "azmonitor-servicetag",
+                          "dst": "{spec-url}",
+                          "protocol": "tcp",
+                          "port": "443",
+                          "description": "This endpoint is used to send metrics data and logs to Azure Monitor and Log Analytics. Uses the 'AzureMonitor' service tag.",
+                          "requiredPrivate": true,
+                          "enabled": false
+                      }
+                  ]
+              },
+              {
+                  "enabled": false,
+                  "name": "azmonitor-app-required",
+                  "rules": [
+                      {
+                          "name": "visualstudio-dc",
+                          "dst": "dc.services.visualstudio.com",
+                          "protocol": "https",
+                          "port": "443",
+                          "description": "This endpoint is used for metrics and monitoring telemetry using Azure Monitor.",
+                          "requiredPrivate": true,
+                          "enabled": true
+                      },
+                      {
+                          "name": "ods-opinsights",
+                          "dst": "{id}.ods.opinsights.azure.com",
+                          "protocol": "https",
+                          "port": "443",
+                          "description": "This endpoint is used by Azure Monitor for ingesting log analytics data.",
+                          "requiredPrivate": true,
+                          "enabled": false
+                      },
+                      {
+                          "name": "oms-opinsights",
+                          "dst": "{id}.oms.opinsights.azure.com",
+                          "protocol": "https",
+                          "port": "443",
+                          "description": "This endpoint is used by OMS agent, which is used to authenticate with the Log Analytics service.",
+                          "requiredPrivate": true,
+                          "enabled": false
+                      },
+                      {
+                          "name": "monitoring-azure",
+                          "dst": "{id}.monitoring.azure.com",
+                          "protocol": "https",
+                          "port": "443",
+                          "description": "This endpoint is used to send metrics data to Azure Monitor.",
+                          "requiredPrivate": true,
+                          "enabled": false
+                      }
+                  ]
+              },
+              {
+                  "enabled": false,
+                  "name": "defender-app-required",
+                  "rules": [
+                      {
+                          "name": "aad-login",
+                          "dst": "login.microsoftonline.com",
+                          "protocol": "https",
+                          "port": "443",
+                          "description": "Required for Active Directory authentication.",
+                          "requiredPrivate": true,
+                          "enabled": true
+                      },
+                      {
+                          "name": "ods-opinsights",
+                          "dst": "{id}.ods.opinsights.azure.com",
+                          "protocol": "https",
+                          "port": "443",
+                          "description": "Required for Microsoft Defender to upload security events to the cloud.",
+                          "requiredPrivate": true,
+                          "enabled": false
+                      },
+                      {
+                          "name": "oms-opinsights",
+                          "dst": "{id}.oms.opinsights.azure.com",
+                          "protocol": "https",
+                          "port": "443",
+                          "description": "Required to authenticate with Log Analytics workspaces.",
+                          "requiredPrivate": true,
+                          "enabled": false
+                      }
+                  ]
+              },
+              {
+                  "enabled": true,
+                  "name": "azpolicy-app-required",
+                  "rules": [
+                      {
+                          "name": "data-policy",
+                          "dst": "data.policy.core.windows.net",
+                          "protocol": "https",
+                          "port": "443",
+                          "description": "This address is used to pull Kubernetes policies and to report cluster compliance status to the policy service.",
+                          "requiredPrivate": true,
+                          "enabled": true
+                      },
+                      {
+                          "name": "store-policy",
+                          "dst": "store.policy.core.windows.net",
+                          "protocol": "https",
+                          "port": "443",
+                          "description": "This address is used to pull the Gatekeeper artifacts of built-in policies.",
+                          "requiredPrivate": true,
+                          "enabled": true
+                      },
+                      {
+                          "name": "dc-services-visualstudio",
+                          "dst": "dc.services.visualstudio.com",
+                          "protocol": "https",
+                          "port": "443",
+                          "description": "Azure Policy add-on that sends telemetry data to application insights endpoint.",
+                          "requiredPrivate": true,
+                          "enabled": true
+                      }
+                  ]
+              },
+              {
+                  "enabled": true,
+                  "name": "azpolicy-21vianet-app-required",
+                  "rules": [
+                      {
+                          "name": "data-policy",
+                          "dst": "data.policy.azure.cn",
+                          "protocol": "https",
+                          "port": "443",
+                          "description": "This address is used to pull Kubernetes policies and to report cluster compliance status to the policy service.",
+                          "requiredPrivate": true,
+                          "enabled": true
+                      },
+                      {
+                          "name": "store-policy",
+                          "dst": "store.policy.azure.cn",
+                          "protocol": "https",
+                          "port": "443",
+                          "description": "This address is used to pull the Gatekeeper artifacts of built-in policies.",
+                          "requiredPrivate": true,
+                          "enabled": true
+                      }
+                  ]
+              },
+              {
+                  "enabled": true,
+                  "name": "azpolicy-usgov-app-required",
+                  "rules": [
+                      {
+                          "name": "data-policy",
+                          "dst": "data.policy.azure.us",
+                          "protocol": "https",
+                          "port": "443",
+                          "description": "This address is used to pull Kubernetes policies and to report cluster compliance status to the policy service.",
+                          "requiredPrivate": true,
+                          "enabled": true
+                      },
+                      {
+                          "name": "store-policy",
+                          "dst": "store.policy.azure.us",
+                          "protocol": "https",
+                          "port": "443",
+                          "description": "This address is used to pull the Gatekeeper artifacts of built-in policies.",
+                          "requiredPrivate": true,
+                          "enabled": true
+                      }
+                  ]
+              },
+              {
+                  "enabled": false,
+                  "name": "extensions-app-required",
+                  "rules": [
+                      {
+                          "name": "kube-ext",
+                          "dst": "{region}.dp.kubernetesconfiguration.azure.com",
+                          "protocol": "https",
+                          "port": "443",
+                          "description": "This address is used to fetch configuration information from the Cluster Extensions service and report extension status to the service.",
+                          "requiredPrivate": true,
+                          "enabled": false
+                      },
+                      {
+                          "name": "mcr-https",
+                          "dst": "mcr.microsoft.com",
+                          "protocol": "https",
+                          "port": "443",
+                          "description": "Required to access images in Microsoft Container Registry (MCR). This registry contains first-party images/charts (for example, coreDNS, etc.). These images are required for the correct creation and functioning of the cluster, including scale and upgrade operations.",
+                          "requiredPrivate": true,
+                          "enabled": true
+                      },
+                      {
+                          "name": "mcr-data-https",
+                          "dst": "{endpoint}.data.mcr.microsoft.com",
+                          "protocol": "https",
+                          "port": "443",
+                          "description": "Required for MCR storage backed by the Azure content delivery network (CDN).",
+                          "requiredPrivate": true,
+                          "enabled": false
+                      }
+                  ]
+              },
+              {
+                  "enabled": false,
+                  "name": "extensions-gov-app-required",
+                  "rules": [
+                      {
+                          "name": "kube-ext",
+                          "dst": "{region}.dp.kubernetesconfiguration.azure.us",
+                          "protocol": "https",
+                          "port": "443",
+                          "description": "This address is used to fetch configuration information from the Cluster Extensions service and report extension status to the service.",
+                          "requiredPrivate": true,
+                          "enabled": false
+                      },
+                      {
+                          "name": "mcr-https",
+                          "dst": "mcr.microsoft.com",
+                          "protocol": "https",
+                          "port": "443",
+                          "description": "Required to access images in Microsoft Container Registry (MCR). This registry contains first-party images/charts (for example, coreDNS, etc.). These images are required for the correct creation and functioning of the cluster, including scale and upgrade operations.",
+                          "requiredPrivate": true,
+                          "enabled": true
+                      },
+                      {
+                          "name": "mcr-data-https",
+                          "dst": "{endpoint}.data.mcr.microsoft.com",
+                          "protocol": "https",
+                          "port": "443",
+                          "description": "Required for MCR storage backed by the Azure content delivery network (CDN).",
+                          "requiredPrivate": true,
+                          "enabled": false
+                      }
+                  ]
+              }
+          ]
+      }

@@ -41,9 +41,9 @@ pub async fn load_egress_data() -> Result<EgressData> {
     let in_file: std::fs::File;
 
     if std::env::var("LOCAL_TEST")? == String::from("true") {
-        in_file = std::fs::File::open("./egress-data/20220315-egress.json")?;
+        in_file = std::fs::File::open("./egress-data/consolidated-egress.json")?;
     } else {
-        unimplemented!()
+        in_file = std::fs::File::open("/etc/egress-data/consolidated-egress.json")?;
     }
 
     let buf = std::io::BufReader::new(in_file);

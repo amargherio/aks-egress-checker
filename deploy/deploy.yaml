@@ -2,11 +2,30 @@ apiVersion: v1
 kind: Pod
 metadata:
   labels:
-    purpose: "network-troubleshooting"
-  name: "aks-egress-checker"
-  namespace: "kube-system"
+    app.kubernetes.io/part-of: aks-egress-checker
+  name: aks-egress-checker
+  namespace: kube-system
 spec:
   containers:
     - image: "<image-url>:<tag>"
       imagePullPolicy: Always
       name: aks-egress-checker
+      resources:
+        limits:
+          cpu: 250m
+          memory: 384Mi
+        requests:
+          cpu: 100m
+          memory: 128Mi
+      volumeMounts:
+        - name: egress-data
+          mountPath: /etc/egress-data
+  restartPolicy: Never
+
+  volumes:
+    - name: egress-data
+      configMap:
+        name: egress-check-data
+        items:
+          - key: 20220315-egress
+            path: 20220315-egress.json

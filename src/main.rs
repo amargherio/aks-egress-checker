@@ -44,6 +44,13 @@ async fn main() -> anyhow::Result<()> {
                     .multiple_occurrences(true)
                     .required(false)
             )
+            .arg(
+                Arg::new("ccp-fqdn")
+                    .long("ccp-fqdn")
+                    .help("Fully qualified domain name for the AKS control plane.")
+                    .long_help("The fully qualified domain name for the AKS control plane. This can be found by viewing the properties of your AKS cluster in Azure Portal, by checking the results of `az aks show` for the cluster, or by viewing the kubeconfig for the cluster. If no CCP URL is provided, the check will attempt to use kubernetes.default.svc.cluster.local, although this may lead to incorrect results.")
+                    .required(true)
+            )
         )
         .subcommand(
             Command::new("list-groups")
@@ -96,7 +103,7 @@ async fn main() -> anyhow::Result<()> {
             if !groups.is_empty() {
                 egress_data.filter_groups(&groups);
 
-                let mut conn_results = conncheck::check_connectivity(&egress_data.groups).await?;
+                let mut conn_results = conncheck::check_connectivity(&egress_data.groups, sub_matches.value_of("ccp-fqdn").unwrap()).await?;
             }
         },
         Some((&_, _)) => {
