@@ -1,6 +1,9 @@
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
 
+const REQUIRED_STRING: &str = "required-egress-only";
+const OPTIONAL_STRING: &str = "optional-egress-only";
+
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct EgressData {
     #[serde(rename = "egressVersion")]
@@ -14,6 +17,7 @@ pub struct EgressGroup {
     pub enabled: bool,
     pub name: String,
     pub rules: Vec<EgressRule>,
+    pub required_group: bool,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -31,9 +35,45 @@ pub struct EgressRule {
 
 impl EgressData {
     pub fn filter_groups(&mut self, selected: &Vec<String>) {
-        let data: Vec<EgressGroup> = self.groups.clone().into_iter().filter(|grp| selected.contains(&grp.name.to_string())).collect(); 
-        
-        self.groups = data;
+        let mut data: Vec<EgressGroup>;
+
+        if selected.len() == 1 {
+            match selected.get(0) {
+                Some(s) => {
+                    if s == "required-egress-only" {
+                        let data: Vec<EgressGroup> = self
+                            .groups
+                            .clone()
+                            .into_iter()
+                            .filter(|grp| grp.required_group)
+                            .collect();
+
+                        self.groups = data;
+                    } else if s == "optional-egress-only" {
+                        let data: Vec<EgressGroup> = self
+                            .groups
+                            .clone()
+                            .into_iter()
+                            .filter(|grp| !grp.required_group)
+                            .collect();
+
+                        self.groups = data;
+                    } else {
+                        ()
+                    }
+                }
+                None => (),
+            }
+        } else {
+            let data: Vec<EgressGroup> = self
+                .groups
+                .clone()
+                .into_iter()
+                .filter(|grp| selected.contains(&grp.name.to_string()))
+                .collect();
+
+            self.groups = data;
+        }
     }
 }
 

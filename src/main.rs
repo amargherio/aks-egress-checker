@@ -1,5 +1,9 @@
-use aks_egress_checker::{telemetry::configure_telemetry, egress::{load_egress_data, EgressGroup, EgressData}, conncheck};
-use clap::{Arg, Command, ArgGroup, ArgAction, builder::PossibleValue};
+use aks_egress_checker::{
+    conncheck,
+    egress::{load_egress_data, EgressData, EgressGroup},
+    telemetry::configure_telemetry,
+};
+use clap::{builder::PossibleValue, Arg, ArgAction, ArgGroup, Command, ArgMatches};
 
 //use crate::telemetry::configure_telemetry;
 
@@ -13,6 +17,7 @@ async fn main() -> anyhow::Result<()> {
         .arg(
             Arg::new("loglevel")
                 .long("log-level")
+                .short('v')
                 .help("Configures the log level for the output.")
                 .long_help("Configures the log level used for output while the application is running. Available options are 'debug', 'info', 'warn', or 'error'. This is equivalent to using the environment variable `RUST_LOG=<value>` and the environment variable will be used if this is not defined.")
                 .required(false)
@@ -31,6 +36,13 @@ async fn main() -> anyhow::Result<()> {
                 .required(false)
         )
         .arg(
+            Arg::new("output-file-path")
+                .short("f")
+                .long("output-file")
+                .help("File path to save the results at. Recommended for JSON output.")
+                .required("false")
+        )
+        .arg(
             Arg::new("egressVersion")
                 .long("egress-version")
                 .required(false)
@@ -41,9 +53,14 @@ async fn main() -> anyhow::Result<()> {
             .about("Performs an egress audit using the selected policies.")
             .arg(
                 Arg::new("egress-groups")
-                    .long("g")
+                    .long("group-name")
+                    .short('g')
                     .help("Egress groups to test for.")
-                    .long_help("Egress groups to test for. The list of groups can be found using the 'list-groups' command. If not provided, the groups will default to the AKS required egress and will not check any of the cluster extensions or add-ons.")
+                    .long_help(
+                        "Egress groups to test for. The list of groups can be found using the 'list-groups' command.
+                        This can be used multiple times to indicate the set of egress connectivity to check.
+                        
+                        If not provided, the groups will default to the AKS required egress and will not check any of the cluster extensions or add-ons.")
                     .action(ArgAction::Append)
                     .required(false)
             )
@@ -60,12 +77,19 @@ async fn main() -> anyhow::Result<()> {
             .arg(
                 Arg::new("name")
                     .long("group-name")
+                    .short('g')
                     .help("Name of the egress group to display.")
-                    .long_help("The name of a specific egress group to list the details of. This flag can be used multiple times and if it is not specified, it will default to all implemented groups.")
+                    .long_help(
+                        "The name of a specific egress group to list the details of. 
+                        This flag can be used multiple times and if it is not specified, it will default to all implemented groups.
+                        
+                        If a value of 'required-egress-only' is supplied, this will print only the required egress.
+                        
+                        If a value of 'optional-egress-only' is supplied, this will print only the optional egress."
+                    )
                     .action(ArgAction::Append)
                     .required(false)
             )
-
         ).get_matches();
 
     configure_telemetry(&matches);
@@ -82,10 +106,8 @@ async fn main() -> anyhow::Result<()> {
             match out.as_str() {
                 "table" => print_table_output(&egress_data),
                 "json" => {
-                    let mut group_names: Vec<String> = Vec::new();
-                    if let Some(names) = sub_matches.get_many::<String>("name") {
-                        group_names = names.map(|n| String::from(n.to_lowercase())).collect();
-                        egress_data.filter_groups(&group_names);
+                    if let Some(groups) = parse_group_args(sub_matches, &egress_data) {
+                        egress_data.filter_groups(&groups);
 
                         println!("{:#?}", serde_json::to_string(&egress_data))
                     } else {
@@ -94,21 +116,26 @@ async fn main() -> anyhow::Result<()> {
                 }
                 &_ => println!("{:#?}", egress_data),
             }
-        },
+        }
         Some(("audit", sub_matches)) => {
-            let mut groups: Vec<String> = Vec::new();
-            if let Some(eg) = sub_matches.get_many::<String>("egress-groups") {
-                eg.for_each(|g| groups.push(String::from(g)))
-            }
-         
-            if !groups.is_empty() {
+            if let Some(groups) = parse_group_args(sub_matches, &egress_data) {
                 egress_data.filter_groups(&groups);
 
                 let conn_results = conncheck::check_connectivity(
                     &egress_data.groups,
-                    sub_matches.get_one::<String>("ccp-fqdn").unwrap()).await?;
+                    sub_matches.get_one::<String>("ccp-fqdn").unwrap(),
+                )
+                .await?;
+            } else {
+                let conn_result = conncheck::check_connectivity(
+                    &egress_data.groups,
+                    sub_matches.get_one::<String>("ccp-fqdn").unwrap(),
+                )
+                .await?;
             }
-        },
+
+            // TODO: Print out the results to the terminal
+        }
         Some((&_, _)) => {
             todo!()
         }
@@ -117,11 +144,20 @@ async fn main() -> anyhow::Result<()> {
         }
     }
 
-
-    Ok(())    
+    Ok(())
 }
 
+fn parse_group_args(sm: ArgMatches, egress_data: &EgressData) -> Option<Vec<&str>> {
+    let mut group_names: Vec<&str> = Vec::new();
 
+    match sub_matches.get_many::<String>("egress-groups") {
+        Some(groups) => {
+            groups.for_each(|g| group_names.push(g.as_str()));
+            Some(group_names)
+        },
+        None => None
+    }
+}
 
 fn print_table_output(egress_data: &aks_egress_checker::egress::EgressData) {
     todo!()
