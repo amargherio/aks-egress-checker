@@ -102,7 +102,7 @@ async fn audit_group(group: &EgressGroup, res: &mut Vec<EgressGroupResult>, ccp:
                             };
                             rule_res_vec.push(rule_res);
 
-                            c.shutdown().await?;
+                            c.shutdown().await.unwrap();
                         }
                     }
                 }
