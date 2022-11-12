@@ -6,7 +6,7 @@
             "dst": "{region}.dp.kubernetesconfiguration.azure.us",
             "protocol": "https",
             "port": "443",
-            "use": "This address is used to fetch configuration information from the Cluster Extensions service and report extension status to the service.",
+            "description": "This address is used to fetch configuration information from the Cluster Extensions service and report extension status to the service.",
             "requiredPrivate": true,
             "enabled": false
         },
@@ -15,7 +15,7 @@
             "dst": "mcr.microsoft.com",
             "protocol": "https",
             "port": "443",
-            "use": "Required to access images in Microsoft Container Registry (MCR). This registry contains first-party images/charts (for example, coreDNS, etc.). These images are required for the correct creation and functioning of the cluster, including scale and upgrade operations.",
+            "description": "Required to access images in Microsoft Container Registry (MCR). This registry contains first-party images/charts (for example, coreDNS, etc.). These images are required for the correct creation and functioning of the cluster, including scale and upgrade operations.",
             "requiredPrivate": true,
             "enabled": true
         },
@@ -24,7 +24,7 @@
             "dst": "{endpoint}.data.mcr.microsoft.com",
             "protocol": "https",
             "port": "443",
-            "use": "Required for MCR storage backed by the Azure content delivery network (CDN).",
+            "description": "Required for MCR storage backed by the Azure content delivery network (CDN).",
             "requiredPrivate": true,
             "enabled": false
         }

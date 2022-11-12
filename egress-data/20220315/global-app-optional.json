@@ -6,7 +6,7 @@
             "dst": "security.ubuntu.com",
             "protocol": "http",
             "port": "80",
-            "use": "This address lets the Linux cluster nodes download the required security patches and updates.",
+            "description": "This address lets the Linux cluster nodes download the required security patches and updates.",
             "requiredPrivate": true,
             "enabled": true
         },
@@ -15,7 +15,7 @@
             "dst": "azure.archive.ubuntu.com",
             "protocol": "http",
             "port": "80",
-            "use": "This address lets the Linux cluster nodes download the required security patches and updates.",
+            "description": "This address lets the Linux cluster nodes download the required security patches and updates.",
             "requiredPrivate": true,
             "enabled": true
         },
@@ -24,7 +24,7 @@
             "dst": "changelogs.ubuntu.com",
             "protocol": "http",
             "port": "80",
-            "use": "This address lets the Linux cluster nodes download the required security patches and updates.",
+            "description": "This address lets the Linux cluster nodes download the required security patches and updates.",
             "requiredPrivate": true,
             "enabled": true
         }

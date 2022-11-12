@@ -6,7 +6,7 @@
             "dst": "{ccp_id}.hcp.{region}.azmk8s.io",
             "protocol": "https",
             "port": "443",
-            "use": "Required for Node <-> API server communication. Replace <location> with the region where your AKS cluster is deployed. This is required for clusters with konnectivity-agent enabled. Konnectivity also uses Application-Layer Protocol Negotiation (ALPN) to communicate between agent and server. Blocking or rewriting the ALPN extension will cause a failure. This is not required for private clusters",
+            "description": "Required for Node <-> API server communication. Replace <location> with the region where your AKS cluster is deployed. This is required for clusters with konnectivity-agent enabled. Konnectivity also uses Application-Layer Protocol Negotiation (ALPN) to communicate between agent and server. Blocking or rewriting the ALPN extension will cause a failure. This is not required for private clusters",
             "requiredPrivate": false,
             "enabled": false
         },
@@ -15,7 +15,7 @@
             "dst": "mcr.microsoft.com",
             "protocol": "https",
             "port": "443",
-            "use": "Required to access images in Microsoft Container Registry (MCR). This registry contains first-party images/charts (for example, coreDNS, etc.). These images are required for the correct creation and functioning of the cluster, including scale and upgrade operations.",
+            "description": "Required to access images in Microsoft Container Registry (MCR). This registry contains first-party images/charts (for example, coreDNS, etc.). These images are required for the correct creation and functioning of the cluster, including scale and upgrade operations.",
             "requiredPrivate": true,
             "enabled": true
         },
@@ -24,7 +24,7 @@
             "dst": "{endpoint}.data.mcr.microsoft.com",
             "protocol": "https",
             "port": "443",
-            "use": "Required for MCR storage backed by the Azure content delivery network (CDN).",
+            "description": "Required for MCR storage backed by the Azure content delivery network (CDN).",
             "requiredPrivate": true,
             "enabled": false
         },
@@ -33,7 +33,7 @@
             "dst": "management.azure.com",
             "protocol": "https",
             "port": "443",
-            "use": "Required for Kubernetes operations against the Azure API.",
+            "description": "Required for Kubernetes operations against the Azure API.",
             "requiredPrivate": true,
             "enabled": true
         },
@@ -42,7 +42,7 @@
             "dst": "login.microsoftonline.com",
             "protocol": "https",
             "port": "443",
-            "use": "Required for Azure Active Directory authentication.",
+            "description": "Required for Azure Active Directory authentication.",
             "requiredPrivate": true,
             "enabled": true
         },
@@ -51,7 +51,7 @@
             "dst": "packages.microsoft.com",
             "protocol": "https",
             "port": "443",
-            "use": "This address is the Microsoft packages repository used for cached apt-get operations. Example packages include Moby, PowerShell, and Azure CLI.",
+            "description": "This address is the Microsoft packages repository used for cached apt-get operations. Example packages include Moby, PowerShell, and Azure CLI.",
             "requiredPrivate": true,
             "enabled": true
         },
@@ -60,7 +60,7 @@
             "dst": "acs-mirror.azureedge.net",
             "protocol": "https",
             "port": "443",
-            "use": "This address is for the repository required to download and install required binaries like kubenet and Azure CNI.",
+            "description": "This address is for the repository required to download and install required binaries like kubenet and Azure CNI.",
             "requiredPrivate": true,
             "enabled": true
         }

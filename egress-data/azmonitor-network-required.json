@@ -6,7 +6,7 @@
             "dst": "{spec-url}",
             "protocol": "tcp",
             "port": "443",
-            "use": "This endpoint is used to send metrics data and logs to Azure Monitor and Log Analytics. Uses the 'AzureMonitor' service tag.",
+            "description": "This endpoint is used to send metrics data and logs to Azure Monitor and Log Analytics. Uses the 'AzureMonitor' service tag.",
             "requiredPrivate": true,
             "enabled": false
         }

@@ -6,7 +6,7 @@
             "dst": "dc.services.visualstudio.com",
             "protocol": "https",
             "port": "443",
-            "use": "This endpoint is used for metrics and monitoring telemetry using Azure Monitor.",
+            "description": "This endpoint is used for metrics and monitoring telemetry using Azure Monitor.",
             "requiredPrivate": true,
             "enabled": true
         },
@@ -15,7 +15,7 @@
             "dst": "{id}.ods.opinsights.azure.com",
             "protocol": "https",
             "port": "443",
-            "use": "This endpoint is used by Azure Monitor for ingesting log analytics data.",
+            "description": "This endpoint is used by Azure Monitor for ingesting log analytics data.",
             "requiredPrivate": true,
             "enabled": false
         },
@@ -24,7 +24,7 @@
             "dst": "{id}.oms.opinsights.azure.com",
             "protocol": "https",
             "port": "443",
-            "use": "This endpoint is used by OMS agent, which is used to authenticate with the Log Analytics service.",
+            "description": "This endpoint is used by OMS agent, which is used to authenticate with the Log Analytics service.",
             "requiredPrivate": true,
             "enabled": false
         },
@@ -33,7 +33,7 @@
             "dst": "{id}.monitoring.azure.com",
             "protocol": "https",
             "port": "443",
-            "use": "This endpoint is used to send metrics data to Azure Monitor.",
+            "description": "This endpoint is used to send metrics data to Azure Monitor.",
             "requiredPrivate": true,
             "enabled": false
         }

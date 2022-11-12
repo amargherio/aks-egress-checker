@@ -6,7 +6,7 @@
             "dst": "nvidia.github.io",
             "protocol": "https",
             "port": "443",
-            "use": "This address is used for correct driver installation and operation on GPU-based nodes.",
+            "description": "This address is used for correct driver installation and operation on GPU-based nodes.",
             "requiredPrivate": true,
             "enabled": true
         },
@@ -15,7 +15,7 @@
             "dst": "us.download.nvidia.com",
             "protocol": "https",
             "port": "443",
-            "use": "This address is used for correct driver installation and operation on GPU-based nodes.",
+            "description": "This address is used for correct driver installation and operation on GPU-based nodes.",
             "requiredPrivate": true,
             "enabled": true
         },
@@ -24,7 +24,7 @@
             "dst": "download.docker.com",
             "protocol": "https",
             "port": "443",
-            "use": "This address is used for correct driver installation and operation on GPU-based nodes.",
+            "description": "This address is used for correct driver installation and operation on GPU-based nodes.",
             "requiredPrivate": true,
             "enabled": true
         }

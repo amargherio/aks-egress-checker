@@ -6,7 +6,7 @@
             "dst": "onegetcdn.azureedge.net",
             "protocol": "https",
             "port": "443",
-            "use": "To install Windows-related binaries.",
+            "description": "To install Windows-related binaries.",
             "requiredPrivate": true,
             "enabled": true
         },
@@ -15,7 +15,7 @@
             "dst": "go.microsoft.com",
             "protocol": "https",
             "port": "443",
-            "use": "To install Windows-related binaries.",
+            "description": "To install Windows-related binaries.",
             "requiredPrivate": true,
             "enabled": true
         },
@@ -24,7 +24,7 @@
             "dst": "{id}.mp.microsoft.com",
             "protocol": "http",
             "port": "80",
-            "use": "To install Windows-related binaries.",
+            "description": "To install Windows-related binaries.",
             "requiredPrivate": true,
             "enabled": false
         },
@@ -33,7 +33,7 @@
             "dst": "www.msftconnecttest.com",
             "protocol": "http",
             "port": "80",
-            "use": "To install Windows-related binaries.",
+            "description": "To install Windows-related binaries.",
             "requiredPrivate": true,
             "enabled": true
         },
@@ -42,7 +42,7 @@
             "dst": "ctldl.windowsupdate.com",
             "protocol": "http",
             "port": "80",
-            "use": "To install Windows-related binaries.",
+            "description": "To install Windows-related binaries.",
             "requiredPrivate": true,
             "enabled": true
         }

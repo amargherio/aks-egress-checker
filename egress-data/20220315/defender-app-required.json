@@ -6,7 +6,7 @@
             "dst": "login.microsoftonline.com",
             "protocol": "https",
             "port": "443",
-            "use": "Required for Active Directory authentication.",
+            "description": "Required for Active Directory authentication.",
             "requiredPrivate": true,
             "enabled": true
         },
@@ -15,7 +15,7 @@
             "dst": "{id}.ods.opinsights.azure.com",
             "protocol": "https",
             "port": "443",
-            "use": "Required for Microsoft Defender to upload security events to the cloud.",
+            "description": "Required for Microsoft Defender to upload security events to the cloud.",
             "requiredPrivate": true,
             "enabled": false
         },
@@ -24,7 +24,7 @@
             "dst": "{id}.oms.opinsights.azure.com",
             "protocol": "https",
             "port": "443",
-            "use": "Required to authenticate with Log Analytics workspaces.",
+            "description": "Required to authenticate with Log Analytics workspaces.",
             "requiredPrivate": true,
             "enabled": false
         }
