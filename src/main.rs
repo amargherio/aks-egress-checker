@@ -85,14 +85,12 @@ async fn main() -> anyhow::Result<()> {
                     let mut group_names: Vec<String> = Vec::new();
                     if let Some(names) = sub_matches.get_many::<String>("name") {
                         group_names = names.map(|n| String::from(n.to_lowercase())).collect();
+                        egress_data.filter_groups(&group_names);
+
+                        println!("{:#?}", serde_json::to_string(&egress_data))
                     } else {
                         println!("{:#?}", serde_json::to_string(&egress_data)?)
                     }
-
-                    egress_data.filter_groups(&group_names);
-
-                    println!("{:#?}", serde_json::to_string(&egress_data))
-
                 }
                 &_ => println!("{:#?}", egress_data),
             }
@@ -106,7 +104,7 @@ async fn main() -> anyhow::Result<()> {
             if !groups.is_empty() {
                 egress_data.filter_groups(&groups);
 
-                let mut conn_results = conncheck::check_connectivity(
+                let conn_results = conncheck::check_connectivity(
                     &egress_data.groups,
                     sub_matches.get_one::<String>("ccp-fqdn").unwrap()).await?;
             }

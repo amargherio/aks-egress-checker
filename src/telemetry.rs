@@ -4,8 +4,8 @@ use std::env;
 pub fn configure_telemetry(matches: &ArgMatches) {
     // get the desired log level - check the flags, then envvar, and default
     // to info if no level provided.
-    if matches.is_present("loglevel") {
-        env::set_var("RUST_LOG", matches.value_of("loglevel").unwrap());
+    if let Some(level) = matches.get_one::<String>("loglevel") {
+        env::set_var("RUST_LOG", level);
     } else if env::var("RUST_LOG").is_ok() {
         // at this point we do nothing because the env var is already configured.
     } else {

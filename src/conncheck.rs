@@ -1,6 +1,6 @@
 use std::net::SocketAddr;
 
-use anyhow::{Context, Result};
+use anyhow::Result;
 use serde::{Deserialize, Serialize};
 use tokio::{
     io::AsyncWriteExt,
@@ -38,7 +38,7 @@ pub async fn check_connectivity(
 
     // TODO: Make this spawn new threads so we can parallelize these tests
     for group in egress_groups {
-        audit_group(&group, &mut res, ccp_fqdn, vm_region).await;
+        audit_group(&group, &mut res, ccp_fqdn, vm_region.as_str()).await;
     }
 
     Ok(res)
@@ -52,7 +52,7 @@ async fn audit_group(group: &EgressGroup, res: &mut Vec<EgressGroupResult>, ccp:
         if rule.rule_enabled == false {
             continue;
         } else {
-            let dest = build_conn_string(&rule, ccp, vm_region);
+            let dest = build_conn_string(&rule, ccp, vm_region).await.unwrap();
             match rule.protocol.as_str() {
                 "udp" => {
                     let sock = UdpSocket::bind("0.0.0.0:0").await.unwrap();
@@ -102,7 +102,7 @@ async fn audit_group(group: &EgressGroup, res: &mut Vec<EgressGroupResult>, ccp:
                             };
                             rule_res_vec.push(rule_res);
 
-                            c.shutdown();
+                            c.shutdown().await?;
                         }
                     }
                 }
@@ -133,7 +133,7 @@ async fn audit_group(group: &EgressGroup, res: &mut Vec<EgressGroupResult>, ccp:
     })
 }
 
-async fn build_conn_string<'a>(rule: &'a EgressRule, ccp: &'a str, vm_region: &'a str) -> Result<&'a str> {
+async fn build_conn_string<'a>(rule: &'a EgressRule, ccp: &'a str, vm_region: &'a str) -> Result<String> {
     tracing::debug!("Building connection string for attempted FQDN and port");
     let mut conn_string: String = String::new();
 
@@ -150,5 +150,5 @@ async fn build_conn_string<'a>(rule: &'a EgressRule, ccp: &'a str, vm_region: &'
     let conn_string = rule.dst.replace("{region}", vm_region);
     // TODO: finish replacements for {endpoint} and {id}
 
-    Ok(conn_string.as_str())
+    Ok(conn_string)
 }
