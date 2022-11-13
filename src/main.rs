@@ -106,7 +106,9 @@ async fn main() -> anyhow::Result<()> {
             match out.as_str() {
                 "table" => print_table_output(&egress_data),
                 "json" => {
-                    if let Some(groups) = parse_group_args(sub_matches, &egress_data) {
+                    let filtered_groups = parse_group_args(sub_matches);
+                    match filtered_groups {
+                        Some(groups) => {
                         egress_data.filter_groups(&groups);
 
                         println!("{:#?}", serde_json::to_string(&egress_data))
@@ -118,7 +120,7 @@ async fn main() -> anyhow::Result<()> {
             }
         }
         Some(("audit", sub_matches)) => {
-            if let Some(groups) = parse_group_args(sub_matches, &egress_data) {
+            if let Some(groups) = parse_group_args(sub_matches) {
                 egress_data.filter_groups(&groups);
 
                 let conn_results = conncheck::check_connectivity(
@@ -127,7 +129,7 @@ async fn main() -> anyhow::Result<()> {
                 )
                 .await?;
             } else {
-                let conn_result = conncheck::check_connectivity(
+                let conn_results = conncheck::check_connectivity(
                     &egress_data.groups,
                     sub_matches.get_one::<String>("ccp-fqdn").unwrap(),
                 )
@@ -147,13 +149,13 @@ async fn main() -> anyhow::Result<()> {
     Ok(())
 }
 
-fn parse_group_args(sm: ArgMatches, egress_data: &EgressData) -> Option<Vec<&str>> {
-    let mut group_names: Vec<&str> = Vec::new();
+fn parse_group_args<'a>(sm: &'a ArgMatches) -> Option<Vec<&String>> {
+    let mut group_names: Vec<&String> = Vec::new();
 
-    match sub_matches.get_many::<String>("egress-groups") {
+    match sm.get_many::<String>("egress-groups") {
         Some(groups) => {
-            groups.for_each(|g| group_names.push(g.as_str()));
-            Some(group_names)
+            groups.for_each(|g| group_names.push(g));
+            Some(group_names.clone())
         },
         None => None
     }
