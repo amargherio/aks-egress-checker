@@ -37,10 +37,10 @@ async fn main() -> anyhow::Result<()> {
         )
         .arg(
             Arg::new("output-file-path")
-                .short("f")
+                .short('f')
                 .long("output-file")
                 .help("File path to save the results at. Recommended for JSON output.")
-                .required("false")
+                .required(false)
         )
         .arg(
             Arg::new("egressVersion")
