@@ -1,11 +1,9 @@
 use aks_egress_checker::{
     conncheck,
-    egress::{load_egress_data, EgressData, EgressGroup},
+    egress::{load_egress_data, print_conn_results, EgressData},
     telemetry::configure_telemetry,
 };
-use clap::{builder::PossibleValue, Arg, ArgAction, ArgGroup, Command, ArgMatches};
-
-//use crate::telemetry::configure_telemetry;
+use clap::{builder::PossibleValue, Arg, ArgAction, Command, ArgMatches};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -109,11 +107,11 @@ async fn main() -> anyhow::Result<()> {
                     let filtered_groups = parse_group_args(sub_matches);
                     match filtered_groups {
                         Some(groups) => {
-                        egress_data.filter_groups(&groups);
+                            egress_data.filter_groups(&groups);
 
-                        println!("{:#?}", serde_json::to_string(&egress_data))
-                    } else {
-                        println!("{:#?}", serde_json::to_string(&egress_data)?)
+                            println!("{:#?}", serde_json::to_string(&egress_data))
+                        },
+                        None => println!("{:#?}", serde_json::to_string(&egress_data)?)
                     }
                 }
                 &_ => println!("{:#?}", egress_data),
@@ -128,21 +126,23 @@ async fn main() -> anyhow::Result<()> {
                     sub_matches.get_one::<String>("ccp-fqdn").unwrap(),
                 )
                 .await?;
+
+                print_conn_results(&conn_results, &sub_matches).await;
             } else {
                 let conn_results = conncheck::check_connectivity(
                     &egress_data.groups,
                     sub_matches.get_one::<String>("ccp-fqdn").unwrap(),
                 )
                 .await?;
-            }
 
-            // TODO: Print out the results to the terminal
+                print_conn_results(&conn_results, &sub_matches).await;
+            }
         }
         Some((&_, _)) => {
-            todo!()
+            unimplemented!()
         }
         None => {
-            todo!()
+            unimplemented!()
         }
     }
 
@@ -161,6 +161,6 @@ fn parse_group_args<'a>(sm: &'a ArgMatches) -> Option<Vec<&String>> {
     }
 }
 
-fn print_table_output(egress_data: &aks_egress_checker::egress::EgressData) {
+fn print_table_output(_egress_data: &EgressData) {
     todo!()
 }
