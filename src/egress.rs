@@ -1,8 +1,8 @@
-use anyhow::Result;
+use anyhow::{anyhow, Result};
+use clap::ArgMatches;
 use serde::{Deserialize, Serialize};
 
-const REQUIRED_STRING: &str = "required-egress-only";
-const OPTIONAL_STRING: &str = "optional-egress-only";
+use crate::conncheck::EgressGroupResult;
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct EgressData {
@@ -34,13 +34,11 @@ pub struct EgressRule {
 }
 
 impl EgressData {
-    pub fn filter_groups(&mut self, selected: &Vec<String>) {
-        let mut data: Vec<EgressGroup>;
-
+    pub fn filter_groups(&mut self, selected: &Vec<&String>) {
         if selected.len() == 1 {
             match selected.get(0) {
                 Some(s) => {
-                    if s == "required-egress-only" {
+                    if s.eq_ignore_ascii_case("required-egress-only") {
                         let data: Vec<EgressGroup> = self
                             .groups
                             .clone()
@@ -49,7 +47,7 @@ impl EgressData {
                             .collect();
 
                         self.groups = data;
-                    } else if s == "optional-egress-only" {
+                    } else if s.eq_ignore_ascii_case("optional-egress-only") {
                         let data: Vec<EgressGroup> = self
                             .groups
                             .clone()
@@ -69,7 +67,7 @@ impl EgressData {
                 .groups
                 .clone()
                 .into_iter()
-                .filter(|grp| selected.contains(&grp.name.to_string()))
+                .filter(|grp| selected.contains(&&grp.name))
                 .collect();
 
             self.groups = data;
