@@ -75,17 +75,53 @@ impl EgressData {
     }
 }
 
+#[tracing::instrument()]
 pub async fn load_egress_data() -> Result<EgressData> {
-    let in_file: std::fs::File;
+    let mut egress_data = EgressData {
+        name: String::from("aks-egress"),
+        egress_version: String::from(""),
+        groups: Vec::new(),
+    };
+    let mut path = "";
 
     if std::env::var("LOCAL_TEST")? == String::from("true") {
-        in_file = std::fs::File::open("./egress-data/consolidated-egress.json")?;
+        path = ".";
     } else {
-        in_file = std::fs::File::open("/etc/egress-data/consolidated-egress.json")?;
+        path = "/etc/egress-data";
     }
 
-    let buf = std::io::BufReader::new(in_file);
-    let data: EgressData = serde_json::from_reader(buf)?;
+    let egress_files = std::fs::read_dir(&path)?;
 
-    Ok(data)
+    egress_files.for_each(|entry| match entry {
+        Ok(de) => {
+            if de.file_type().unwrap().is_file() {
+                let p = de.path();
+                if p.extension().unwrap() == "json" {
+                    let in_file = std::fs::File::open(p).unwrap();
+                    let buf = std::io::BufReader::new(in_file);
+
+                    let eg: EgressGroup = serde_json::from_reader(buf).unwrap();
+                    egress_data.groups.push(eg.clone());
+                } else {
+                    log::warn!("Found a non-JSON file in the egress data.");
+                }
+            } else {
+                log::debug!("Skipping non-file DirEntry {:#?}", de);
+            }
+        }
+        Err(e) => {
+            anyhow!(
+                "An error occurred while attempting to read the path {} - err: {:?}",
+                path,
+                e
+            );
+        }
+    });
+
+    Ok(egress_data)
+}
+
+#[tracing::instrument(skip(_results, _sm))]
+pub async fn print_conn_results(_results: &Vec<EgressGroupResult>, _sm: &ArgMatches) {
+    unimplemented!()
 }
