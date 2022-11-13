@@ -58,26 +58,23 @@ async fn audit_group(group: &EgressGroup, res: &mut Vec<EgressGroupResult>, ccp:
                     let sock = UdpSocket::bind("0.0.0.0:0").await.unwrap();
                     let stream = sock.connect(dest.parse::<SocketAddr>().unwrap()).await;
 
-                    match stream {
-                        Err(e) => {
-                            let rule_res = EgressRuleResult {
-                                name: rule.name,
-                                result: ConnCheckResult::Fail,
-                                err_msg: Some(e.to_string()),
-                            };
-                            &rule_res_vec.push(rule_res);
-                        }
-                        Ok(mut _c) => {
-                            let rule_res = EgressRuleResult {
-                                name: rule.name,
-                                result: ConnCheckResult::Pass,
-                                err_msg: None,
-                            };
-                            &rule_res_vec.push(rule_res);
-
-                            //TODO: need to close out this socket and connection to reclaim it
-
-                        }
+                    if stream.is_err() {
+                        // handle connectivity error/fail
+                        let e = stream.err().unwrap();
+                        let rule_res = EgressRuleResult {
+                            name: rule.name,
+                            result: ConnCheckResult::Fail,
+                            err_msg: Some(e.to_string()),
+                        };
+                        let _ = &rule_res_vec.push(rule_res);
+                    } else {
+                        // test passed
+                        let rule_res = EgressRuleResult {
+                            name: rule.name,
+                            result: ConnCheckResult::Pass,
+                            err_msg: None,
+                        };
+                        let _ = &rule_res_vec.push(rule_res);
                     }
                 }
                 "tcp" => {
@@ -133,7 +130,7 @@ async fn audit_group(group: &EgressGroup, res: &mut Vec<EgressGroupResult>, ccp:
     })
 }
 
-async fn build_conn_string<'a>(rule: &'a EgressRule, ccp: &'a str, vm_region: &'a str) -> Result<String> {
+async fn build_conn_string(rule: &EgressRule, ccp: &str, vm_region: &str) -> Result<String> {
     tracing::debug!("Building connection string for attempted FQDN and port");
     let mut conn_string: String = String::new();
 
@@ -144,11 +141,11 @@ async fn build_conn_string<'a>(rule: &'a EgressRule, ccp: &'a str, vm_region: &'
         // for now the ccp-fqdn value is required but eventually we need a smarter way to determine
         // the CCP for a given cluster.
         conn_string = format!("{}:{}", ccp, rule.port);
+    } else {
+        // replacing templates with actual values.
+        conn_string = rule.dst.replace("{region}", vm_region);
+        // TODO: finish replacements for {endpoint} and {id}
     }
-
-    // replacing templates with actual values.
-    let conn_string = rule.dst.replace("{region}", vm_region);
-    // TODO: finish replacements for {endpoint} and {id}
 
     Ok(conn_string)
 }
