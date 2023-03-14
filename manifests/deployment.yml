@@ -1,0 +1,19 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: "margenpurpose-d5ac"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: "margenpurpose-d5ac"
+  template:
+    metadata:
+      labels:
+        app: "margenpurpose-d5ac"
+    spec:
+      containers:
+        - name: "margenpurpose-d5ac"
+          image: "amardeptest.azurecr.io/margenpurpose"
+          ports:
+          - containerPort: 80
