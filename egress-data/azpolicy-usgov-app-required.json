@@ -1,5 +1,6 @@
 {
     "enabled": true,
+    "name": "azpolicy-usgov-app-required",
     "rules": [
         {
             "name": "data-policy",

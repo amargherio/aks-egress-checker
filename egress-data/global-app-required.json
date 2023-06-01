@@ -1,5 +1,6 @@
 {
     "enabled": true,
+    "name": "globbal-app-required",
     "rules": [
         {
             "name": "api-server-https-443",

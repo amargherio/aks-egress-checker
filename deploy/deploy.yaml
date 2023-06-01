@@ -7,7 +7,10 @@ metadata:
   namespace: kube-system
 spec:
   containers:
-    - image: "<image-url>:<tag>"
+    - image: "amargherio.azurecr.io/utils/egress-checker:0.9.0"
+      command: ['aks-egress-checker']
+      args:
+      - audit
       imagePullPolicy: Always
       name: aks-egress-checker
       resources:
@@ -17,15 +20,14 @@ spec:
         requests:
           cpu: 100m
           memory: 128Mi
-      volumeMounts:
-        - name: egress-data
-          mountPath: /etc/egress-data
+#      volumeMounts:
+#        - name: egress-data
+#          mountPath: /etc/egress-data
   restartPolicy: Never
-
-  volumes:
-    - name: egress-data
-      configMap:
-        name: egress-check-data
-        items:
-          - key: 20220315-egress
-            path: 20220315-egress.json
+#  volumes:
+#    - name: egress-data
+#      configMap:
+#        name: egress-check-data
+#        items:
+#          - key: 20220315-egress
+#            path: 20220315-egress.json

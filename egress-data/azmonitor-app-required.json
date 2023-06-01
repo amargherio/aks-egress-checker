@@ -1,5 +1,6 @@
 {
     "enabled": false,
+    "name": "azmonitor-app-required",
     "rules": [
         {
             "name": "visualstudio-dc",

@@ -1,5 +1,6 @@
 {
     "enabled": true,
+    "name": "gpu-app-required",
     "rules": [
         {
             "name": "nvidia-github",

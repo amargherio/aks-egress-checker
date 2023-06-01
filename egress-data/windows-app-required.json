@@ -1,5 +1,6 @@
 {
     "enabled": false,
+    "name": "windows-app-required",
     "rules": [
         {
             "name": "oneget-cdn",

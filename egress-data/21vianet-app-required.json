@@ -1,5 +1,6 @@
 {
     "enabled": false,
+    "name": "21vianet-app-required",
     "rules": [
         {
             "name": "api-server-https-443",

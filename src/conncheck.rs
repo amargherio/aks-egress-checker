@@ -7,7 +7,10 @@ use tokio::{
     net::{TcpStream, UdpSocket},
 };
 
-use crate::{egress::{EgressGroup, EgressRule}, imds};
+use crate::{
+    egress::{EgressGroup, EgressRule},
+    imds,
+};
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
 pub enum ConnCheckResult {
@@ -45,7 +48,12 @@ pub async fn check_connectivity(
 }
 
 #[tracing::instrument(skip(group, res))]
-async fn audit_group(group: &EgressGroup, res: &mut Vec<EgressGroupResult>, ccp: &str, vm_region: &str) {
+async fn audit_group(
+    group: &EgressGroup,
+    res: &mut Vec<EgressGroupResult>,
+    ccp: &str,
+    vm_region: &str,
+) {
     let mut rule_res_vec: Vec<EgressRuleResult> = Vec::new();
 
     for rule in group.rules.clone() {

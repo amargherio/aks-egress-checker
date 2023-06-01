@@ -1,5 +1,6 @@
 {
     "enabled": false,
+    "name": "21vianet-net-required",
     "rules": [
         {
             "name": "api-server-udp-1194",

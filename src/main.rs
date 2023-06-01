@@ -1,9 +1,11 @@
+use aks_egress_checker::egress::{EgressGroup, EgressRule};
 use aks_egress_checker::{
     conncheck,
     egress::{load_egress_data, print_conn_results, EgressData},
     telemetry::configure_telemetry,
 };
-use clap::{builder::PossibleValue, Arg, ArgAction, Command, ArgMatches};
+use clap::{builder::PossibleValue, Arg, ArgAction, ArgMatches, Command};
+use tabled::{builder::Builder, Style};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -72,9 +74,10 @@ async fn main() -> anyhow::Result<()> {
         )
         .subcommand(
             Command::new("list-groups")
+                .about("Prints the group and rule definition for one or more egress groups.")
             .arg(
-                Arg::new("name")
-                    .long("group-name")
+                Arg::new("egress-groups")
+                    .long("egress-group")
                     .short('g')
                     .help("Name of the egress group to display.")
                     .long_help(
@@ -110,8 +113,8 @@ async fn main() -> anyhow::Result<()> {
                             egress_data.filter_groups(&groups);
 
                             println!("{:#?}", serde_json::to_string(&egress_data))
-                        },
-                        None => println!("{:#?}", serde_json::to_string(&egress_data)?)
+                        }
+                        None => println!("{:#?}", serde_json::to_string(&egress_data)?),
                     }
                 }
                 &_ => println!("{:#?}", egress_data),
@@ -156,11 +159,59 @@ fn parse_group_args<'a>(sm: &'a ArgMatches) -> Option<Vec<&String>> {
         Some(groups) => {
             groups.for_each(|g| group_names.push(g));
             Some(group_names.clone())
-        },
-        None => None
+        }
+        None => None,
     }
 }
 
-fn print_table_output(_egress_data: &EgressData) {
-    todo!()
+fn print_table_output(egress_data: &EgressData) {
+    let mut builder = Builder::default();
+    let columns = vec![
+        "Egress Group",
+        "Name",
+        "Destination",
+        "Port",
+        "Protocol",
+        "Required for private clusters?",
+        "Enabled for checking?",
+    ];
+    builder.set_columns(columns);
+
+    // for each set of egress groups, grab some basics and then iterate the rules to print each one
+    egress_data.groups.iter().for_each(|g: &EgressGroup| {
+        g.rules
+            .iter()
+            .filter(|r| r.rule_enabled)
+            .for_each(|r: &EgressRule| {
+                let mut enabled = String::new();
+                let mut required_private = String::new();
+
+                if r.rule_enabled {
+                    enabled = String::from("Yes");
+                } else {
+                    enabled = String::from("No");
+                }
+
+                if r.required_private {
+                    required_private = String::from("Yes");
+                } else {
+                    required_private = String::from("No");
+                }
+                //builder.add_record(vec![g.name.clone(), r.name.clone(), r.dst.clone(), r.port.clone(), r.protocol.clone(), r.description.clone(), required_private.clone(), enabled.clone()]);
+                builder.add_record(vec![
+                    g.name.clone(),
+                    r.name.clone(),
+                    r.dst.clone(),
+                    r.port.clone(),
+                    r.protocol.clone(),
+                    required_private.clone(),
+                    enabled.clone(),
+                ]);
+            });
+    });
+
+    let mut table = builder.build();
+    table.with(Style::modern());
+
+    println!("{}", table);
 }

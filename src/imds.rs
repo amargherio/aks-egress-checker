@@ -14,7 +14,9 @@ pub async fn get_region() -> Result<String> {
 
     if res.status().is_client_error() || res.status().is_server_error() {
         // handle an issue with the client making the request
-        todo!("Handle an issue with the client making the request or a server error in the response");
+        todo!(
+            "Handle an issue with the client making the request or a server error in the response"
+        );
     }
 
     let res_payload = res.text().await?;
@@ -22,8 +24,39 @@ pub async fn get_region() -> Result<String> {
     let region = val["compute"]["location"].to_string();
 
     if region.is_empty() {
-        return Err(anyhow!("Azure region was not returned in the IMDS response - response received: {:?}", res_payload));
+        return Err(anyhow!(
+            "Azure region was not returned in the IMDS response - response received: {:?}",
+            res_payload
+        ));
     }
 
     Ok(region)
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    use mockall::{automock, mock, predicate::*};
+
+    #[test]
+    fn client_should_extract_region_from_successful_response() {
+        todo!();
+        mock! {
+            pub reqwest::async_impl::request::Request {
+                pub fn send(self) -> impl Future<Output = Result<Response, >>
+            }
+        }
+        let mut mock =
+    }
+
+    #[test]
+    fn client_should_retry_on_retriable_error() {
+        todo!()
+    }
+
+    #[test]
+    fn client_should_exit_on_client_error_response() {
+        todo!()
+    }
+
 }

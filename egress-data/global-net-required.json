@@ -1,5 +1,6 @@
 {
     "enabled": true,
+    "name": "global-net-required",
     "rules": [
         {
             "name": "api-server-udp-1194",

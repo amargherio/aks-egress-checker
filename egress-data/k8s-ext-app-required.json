@@ -1,5 +1,6 @@
 {
     "enabled": false,
+    "name": "k8s-ext-app-required",
     "rules": [
         {
             "name": "kube-ext",

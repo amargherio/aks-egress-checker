@@ -17,7 +17,8 @@ pub struct EgressGroup {
     pub enabled: bool,
     pub name: String,
     pub rules: Vec<EgressRule>,
-    pub required_group: bool,
+    //#[serde(rename = "required")]
+    //pub required_group: bool,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -43,7 +44,7 @@ impl EgressData {
                             .groups
                             .clone()
                             .into_iter()
-                            .filter(|grp| grp.required_group)
+                            // .filter(|grp| grp.required_group)
                             .collect();
 
                         self.groups = data;
@@ -52,7 +53,7 @@ impl EgressData {
                             .groups
                             .clone()
                             .into_iter()
-                            .filter(|grp| !grp.required_group)
+                            // .filter(|grp| !grp.required_group)
                             .collect();
 
                         self.groups = data;
@@ -85,7 +86,7 @@ pub async fn load_egress_data() -> Result<EgressData> {
     let mut path = "";
 
     if std::env::var("LOCAL_TEST")? == String::from("true") {
-        path = ".";
+        path = "./egress-data";
     } else {
         path = "/etc/egress-data";
     }
@@ -96,6 +97,7 @@ pub async fn load_egress_data() -> Result<EgressData> {
         Ok(de) => {
             if de.file_type().unwrap().is_file() {
                 let p = de.path();
+                println!("Current file name is {:#?}", p.file_name().unwrap());
                 if p.extension().unwrap() == "json" {
                     let in_file = std::fs::File::open(p).unwrap();
                     let buf = std::io::BufReader::new(in_file);

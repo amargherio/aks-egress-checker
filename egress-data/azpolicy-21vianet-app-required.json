@@ -1,5 +1,6 @@
 {
     "enabled": true,
+    "name": "azpolicy-21vianet-app-required",
     "rules": [
         {
             "name": "data-policy",

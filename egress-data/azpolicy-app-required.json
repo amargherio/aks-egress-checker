@@ -1,5 +1,6 @@
 {
     "enabled": true,
+    "name": "azpolicy-app-required",
     "rules": [
         {
             "name": "data-policy",
