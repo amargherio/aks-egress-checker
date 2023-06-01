@@ -46,7 +46,7 @@ mod test {
                 pub fn send(self) -> impl Future<Output = Result<Response, >>
             }
         }
-        let mut mock =
+        //let mut mock =
     }
 
     #[test]

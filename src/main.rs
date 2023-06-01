@@ -5,7 +5,8 @@ use aks_egress_checker::{
     telemetry::configure_telemetry,
 };
 use clap::{builder::PossibleValue, Arg, ArgAction, ArgMatches, Command};
-use tabled::{builder::Builder, Style};
+use tabled::{builder::Builder};
+use tabled::settings::Style;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -175,7 +176,7 @@ fn print_table_output(egress_data: &EgressData) {
         "Required for private clusters?",
         "Enabled for checking?",
     ];
-    builder.set_columns(columns);
+    builder.set_header(columns.clone());
 
     // for each set of egress groups, grab some basics and then iterate the rules to print each one
     egress_data.groups.iter().for_each(|g: &EgressGroup| {
@@ -197,8 +198,8 @@ fn print_table_output(egress_data: &EgressData) {
                 } else {
                     required_private = String::from("No");
                 }
-                //builder.add_record(vec![g.name.clone(), r.name.clone(), r.dst.clone(), r.port.clone(), r.protocol.clone(), r.description.clone(), required_private.clone(), enabled.clone()]);
-                builder.add_record(vec![
+
+                builder.push_record(vec![
                     g.name.clone(),
                     r.name.clone(),
                     r.dst.clone(),
