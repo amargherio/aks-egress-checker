@@ -10,6 +10,7 @@ use tabled::settings::Style;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
+
     let matches = Command::new("aks-egress")
         .about("AKS egress checker for outbound connectivity")
         .version("0.1.0")
@@ -94,7 +95,7 @@ async fn main() -> anyhow::Result<()> {
             )
         ).get_matches();
 
-    configure_telemetry(&matches);
+    configure_telemetry(&matches); // configure telemetry and logging
 
     // parse the JSON for the egress rules and filter down to enabled groups
     let mut egress_data = load_egress_data().await?;

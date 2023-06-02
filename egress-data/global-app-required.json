@@ -1,6 +1,6 @@
 {
     "enabled": true,
-    "name": "globbal-app-required",
+    "name": "global-app-required",
     "rules": [
         {
             "name": "api-server-https-443",

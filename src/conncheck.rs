@@ -111,6 +111,10 @@ async fn audit_group(
                         }
                     }
                 }
+
+                "https" | "http" => {
+                    todo!()
+                }
                 _ => {
                     todo!()
                 }

@@ -1,5 +1,9 @@
+use anyhow::Result;
 use clap::ArgMatches;
+use tracing_subscriber::{filter::EnvFilter, Registry};
+
 use std::env;
+use tracing_log::LogTracer;
 
 pub fn configure_telemetry(matches: &ArgMatches) {
     // get the desired log level - check the flags, then envvar, and default
@@ -13,5 +17,9 @@ pub fn configure_telemetry(matches: &ArgMatches) {
         env::set_var("RUST_LOG", "info")
     }
 
-    tracing_subscriber::fmt::init();
+    // Initialize the log tracer and the global subscriber
+    LogTracer::init().expect("Failed to set logger");
+    tracing_subscriber::fmt()
+        .with_env_filter(EnvFilter::from_default_env())
+        .init();
 }

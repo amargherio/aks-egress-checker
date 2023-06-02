@@ -1,3 +1,5 @@
+use std::env;
+use std::env::VarError;
 use anyhow::{anyhow, Result};
 use clap::ArgMatches;
 use serde::{Deserialize, Serialize};
@@ -85,10 +87,20 @@ pub async fn load_egress_data() -> Result<EgressData> {
     };
     let mut path = "";
 
-    if std::env::var("LOCAL_TEST")? == String::from("true") {
-        path = "./egress-data";
-    } else {
-        path = "/etc/egress-data";
+    let test_val = env::var("LOCAL_TEST");
+    match test_val {
+        Ok(val) => {
+            if val == String::from("true") {
+                path = "./egress-data";
+            } else {
+                log::debug!("LOCAL_TEST is not set to true, using /etc/egress-data as data directory");
+                path = "/etc/egress-data";
+            }
+        }
+        _ => {
+            log::debug!("LOCAL_TEST is not set, using /etc/egress-data as data directory");
+            path = "/etc/egress-data";
+        }
     }
 
     let egress_files = std::fs::read_dir(&path)?;
