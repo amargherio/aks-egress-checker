@@ -28,6 +28,42 @@
             "description": "Required for MCR storage backed by the Azure content delivery network (CDN).",
             "requiredPrivate": true,
             "enabled": false
+        },
+        {
+            "name": "arc-marketplace",
+            "dst": "arcmktplaceprod.azurecr.io",
+            "protocol": "tcp",
+            "port": "443",
+            "description": "Required to pull container images for installing marketplace extensions on AKS.",
+            "requiredPrivate": true,
+            "enabled": true
+        },
+        {
+            "name": "extension-metrics-ingest",
+            "dst": "*.ingestion.msftcloudes.com",
+            "protocol": "https",
+            "port": "443",
+            "description": "Used to send agent metrics data to Azure.",
+            "requiredPrivate": true,
+            "enabled": false
+        },
+        {
+            "name": "extension-microsoftmetrics",
+            "dst": "*.microsoftmetrics.com",
+            "protocol": "https",
+            "port": "443",
+            "description": "Used to send agent metrics data to Azure.",
+            "requiredPrivate": true,
+            "enabled": false
+        },
+        {
+            "name": "commerce-metering-api",
+            "dst": "marketplaceapi.microsoft.com",
+            "protocol": "https",
+            "port": "443",
+            "description": "Used to send custom meter-based usage to the commerce metering API.",
+            "requiredPrivate": true,
+            "enabled": false
         }
     ]
 }

@@ -21,6 +21,15 @@
             "enabled": false
         },
         {
+            "name": "api-server-ssh",
+            "dst": "*",
+            "protocol": "tcp",
+            "port": "22",
+            "description": "Required for tunneled secure communication between the control plane and nodes.",
+            "requiredPrivate": false,
+            "enabled": false
+        },
+        {
             "name": "ntp",
             "dst": "ntp.ubuntu.com",
             "protocol": "udp",
