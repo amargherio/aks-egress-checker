@@ -1,9 +1,12 @@
 use anyhow::{anyhow, Result};
 use serde_json::Value;
+use tracing::event;
 
 /// Queries Azure IMDS for the region of the deployed VMs.
 /// Short and sweet, bailing quick if something weird happens.
+#[tracing::instrument()]
 pub async fn get_region() -> Result<String> {
+    event!(tracing::Level::INFO, "Querying IMDS for the Azure region the node is deployed in. This is used to build the URLs for the connectivity checks.");
     let client = reqwest::Client::new();
 
     let res = client
@@ -20,10 +23,13 @@ pub async fn get_region() -> Result<String> {
     }
 
     let res_payload = res.text().await?;
+
+    event!(tracing::Level::DEBUG, "IMDS response: {:?}", res_payload);
     let val: Value = serde_json::from_str(res_payload.as_str())?;
     let region = val["compute"]["location"].to_string();
 
     if region.is_empty() {
+        event!(tracing::Level::ERROR, "Azure region was not returned in the IMDS response - response received: {:?}", res_payload);
         return Err(anyhow!(
             "Azure region was not returned in the IMDS response - response received: {:?}",
             res_payload

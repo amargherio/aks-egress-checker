@@ -6,6 +6,7 @@ use tokio::{
     io::AsyncWriteExt,
     net::{TcpStream, UdpSocket},
 };
+use tracing::event;
 
 use crate::{
     egress::{EgressGroup, EgressRule},
@@ -36,6 +37,7 @@ pub async fn check_connectivity(
     egress_groups: &Vec<EgressGroup>,
     ccp_fqdn: &str,
 ) -> Result<Vec<EgressGroupResult>> {
+    tracing::debug!("Beginning connectivity checks...");
     let vm_region = imds::get_region().await?; // grab region for use in URLs
     let mut res: Vec<EgressGroupResult> = Vec::new();
 
