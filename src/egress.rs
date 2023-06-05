@@ -109,7 +109,7 @@ pub async fn load_egress_data() -> Result<EgressData> {
         Ok(de) => {
             if de.file_type().unwrap().is_file() {
                 let p = de.path();
-                println!("Current file name is {:#?}", p.file_name().unwrap());
+                log::debug!("Current file name is {:#?}", p.file_name().unwrap());
                 if p.extension().unwrap() == "json" {
                     let in_file = std::fs::File::open(p).unwrap();
                     let buf = std::io::BufReader::new(in_file);

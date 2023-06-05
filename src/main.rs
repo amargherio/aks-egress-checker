@@ -100,7 +100,7 @@ async fn main() -> anyhow::Result<()> {
     // parse the JSON for the egress rules and filter down to enabled groups
     let mut egress_data = load_egress_data().await?;
 
-    println!("{:#?}", matches);
+    log::debug!("{:#?}", matches);
 
     match matches.subcommand() {
         Some(("list-groups", sub_matches)) => {
