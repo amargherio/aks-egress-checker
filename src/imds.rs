@@ -42,7 +42,14 @@ pub async fn get_region() -> Result<String> {
 #[cfg(test)]
 mod test {
     use super::*;
-    use mockall::{automock, mock, predicate::*};
+    use anyhow::Result;
+    use wiremock::{
+        MockServer, Mock, ResponseTemplate,
+        matchers::{method, path, header},
+    };
+
+    use std::fs;
+    use std::path;
 
     #[test]
     fn client_should_extract_region_from_successful_response() {

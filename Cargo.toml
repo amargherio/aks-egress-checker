@@ -24,3 +24,4 @@ tracing-subscriber = { version = "0.3.17", features = ["registry", "env-filter"]
 [dev-dependencies]
 criterion = "0.5"
 mockall = "0.11.4"
+wiremock = "0.5"
