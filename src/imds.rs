@@ -51,25 +51,75 @@ mod test {
     use std::fs;
     use std::path;
 
-    #[test]
-    fn client_should_extract_region_from_successful_response() {
-        todo!();
-        mock! {
-            pub reqwest::async_impl::request::Request {
-                pub fn send(self) -> impl Future<Output = Result<Response, >>
-            }
-        }
-        //let mut mock =
+    #[tokio::test]
+    async fn client_should_extract_region_from_successful_response() {
+        let imds_resp = fs::read_to_string(std::path::Path::new("test/imds_resp.json")).unwrap();
+        let mock_server = MockServer::start().await;
+
+        let mock = Mock::given(method("GET"))
+            .and(path("/metadata/instance"))
+            .and(header("Metadata", "true"))
+            .respond_with(ResponseTemplate::new(200)
+                .set_body_raw(imds_resp.as_str(), "application/json; charset=utf-8")
+            )
+            .mount(&mock_server)
+            .await;
+
+        let client = reqwest::Client::new();
+        let res = client
+            .get(format!("{}/metadata/instance?api-version=2021-02-01", &mock_server.uri()))
+            .header("Metadata", "true")
+            .send()
+            .await.unwrap();
+
+        let res_payload = res.text().await.unwrap();
+        let val: Value = serde_json::from_str(res_payload.as_str()).unwrap();
+        let region = val["compute"]["location"].as_str().unwrap();
+
+        assert_eq!("eastus2", region);
     }
 
-    #[test]
-    fn client_should_retry_on_retriable_error() {
-        todo!()
+    #[tokio::test]
+    async fn client_should_retry_on_retriable_error() {
+        let imds_resp = fs::read_to_string(std::path::Path::new("test/imds_resp.json")).unwrap();
+        let mock_server = MockServer::start().await;
+
+        let mock = Mock::given(method("GET"))
+            .and(path("/metadata/instance"))
+            .and(header("Metadata", "true"))
+            .respond_with(ResponseTemplate::new(503)
+                .set_body_raw(imds_resp.as_str(), "application/json; charset=utf-8")
+            )
+            .mount(&mock_server)
+            .await;
+
+        let client = reqwest::Client::new();
+        let res = client
+            .get(format!("{}/metadata/instance?api-version=2021-02-01", &mock_server.uri()))
+            .header("Metadata", "true")
+            .send()
+            .await.unwrap();
     }
 
-    #[test]
-    fn client_should_exit_on_client_error_response() {
-        todo!()
-    }
+    #[tokio::test]
+    async fn client_should_exit_on_client_error_response() {
+        let imds_resp = fs::read_to_string(std::path::Path::new("test/imds_resp.json")).unwrap();
+        let mock_server = MockServer::start().await;
 
+        let mock = Mock::given(method("GET"))
+            .and(path("/metadata/instance"))
+            .and(header("Metadata", "true"))
+            .respond_with(ResponseTemplate::new(400)
+                .set_body_raw(imds_resp.as_str(), "application/json; charset=utf-8")
+            )
+            .mount(&mock_server)
+            .await;
+
+        let client = reqwest::Client::new();
+        let res = client
+            .get(format!("{}/metadata/instance?api-version=2021-02-01", &mock_server.uri()))
+            .header("Metadata", "true")
+            .send()
+            .await.unwrap();
+    }
 }
