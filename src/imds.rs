@@ -22,18 +22,20 @@ pub async fn get_region() -> Result<String> {
         );
     }
 
-    let res_payload = res.text().await?;
+        let res_payload = res.text().await?;
 
-    event!(tracing::Level::DEBUG, "IMDS response: {:?}", res_payload);
-    let val: Value = serde_json::from_str(res_payload.as_str())?;
-    let region = val["compute"]["location"].to_string();
+        debug!("IMDS response: {:?}", res_payload);
+        let val: Value = serde_json::from_str(res_payload.as_str())?;
+        let rval = val["compute"]["location"].as_str().unwrap();
+        let region = String::from(rval);
 
-    if region.is_empty() {
-        event!(tracing::Level::ERROR, "Azure region was not returned in the IMDS response - response received: {:?}", res_payload);
-        return Err(anyhow!(
+        if region.is_empty() {
+            error!("Azure region was not returned in the IMDS response - response received: {:?}", res_payload);
+            return Err(anyhow!(
             "Azure region was not returned in the IMDS response - response received: {:?}",
             res_payload
         ));
+        }
     }
 
     Ok(region)
