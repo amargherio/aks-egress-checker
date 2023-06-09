@@ -2,7 +2,7 @@ FROM mcr.microsoft.com/cbl-mariner/base/core:2.0 as builder
 
 ARG RUST_VERSION
 
-# Rust install for 1.66
+# Rust install and app build
 RUN tdnf install -yq tar ca-certificates \
     && echo -e "Finished tar and ca-certificates" \
     && tdnf install -yq build-essential \
