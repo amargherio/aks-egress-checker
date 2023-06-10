@@ -1,3 +1,5 @@
+mod test_target;
+
 use std::net::SocketAddr;
 
 use anyhow::Result;
@@ -6,12 +8,13 @@ use tokio::{
     io::AsyncWriteExt,
     net::{TcpStream, UdpSocket},
 };
-use tracing::event;
 
 use crate::{
     egress::{EgressGroup, EgressRule},
     imds,
 };
+
+pub(crate) const IMDS_HOST: &str = "169.254.169.254";
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
 pub enum ConnCheckResult {
@@ -38,7 +41,7 @@ pub async fn check_connectivity(
     ccp_fqdn: &str,
 ) -> Result<Vec<EgressGroupResult>> {
     tracing::debug!("Beginning connectivity checks...");
-    let vm_region = imds::get_region().await?; // grab region for use in URLs
+    let vm_region = imds::get_region(IMDS_HOST).await?; // grab region for use in URLs
     let mut res: Vec<EgressGroupResult> = Vec::new();
 
     // TODO: Make this spawn new threads so we can parallelize these tests
@@ -62,11 +65,25 @@ async fn audit_group(
         if rule.rule_enabled == false {
             continue;
         } else {
-            let dest = build_conn_string(&rule, ccp, vm_region).await.unwrap();
+            let dest = test_target::build_conn_string(&rule, ccp, vm_region).await.unwrap();
+            let addr = dest.parse::<SocketAddr>();
+
+            if addr.is_err() {
+                let addr_err = addr.unwrap_err();
+                log::warn!("Failed to parse address: {}",addr_err.to_string());
+                let rule_res = EgressRuleResult {
+                    name: rule.name,
+                    result: ConnCheckResult::Fail,
+                    err_msg: Some(addr_err.to_string()),
+                };
+                rule_res_vec.push(rule_res);
+                continue;
+            }
+
             match rule.protocol.as_str() {
                 "udp" => {
                     let sock = UdpSocket::bind("0.0.0.0:0").await.unwrap();
-                    let stream = sock.connect(dest.parse::<SocketAddr>().unwrap()).await;
+                    let stream = sock.connect(addr.unwrap()).await;
 
                     if stream.is_err() {
                         // handle connectivity error/fail
@@ -88,7 +105,7 @@ async fn audit_group(
                     }
                 }
                 "tcp" => {
-                    let stream = TcpStream::connect(dest.parse::<SocketAddr>().unwrap()).await;
+                    let stream = TcpStream::connect(addr.unwrap()).await;
 
                     match stream {
                         Err(e) => {
@@ -142,24 +159,4 @@ async fn audit_group(
                 .collect::<Vec<EgressRuleResult>>(),
         ),
     })
-}
-
-async fn build_conn_string(rule: &EgressRule, ccp: &str, vm_region: &str) -> Result<String> {
-    tracing::debug!("Building connection string for attempted FQDN and port");
-    let mut conn_string: String = String::new();
-
-    if rule.dst == "*" && rule.name.contains("api-server") {
-        // this wildcard is a bit...weird. this should be treated as `kubernetes.default.svc.cluster.local`
-        // if the CCP FDQN isn't specified, although this could result in inaccurate connectivity tests.
-        //
-        // for now the ccp-fqdn value is required but eventually we need a smarter way to determine
-        // the CCP for a given cluster.
-        conn_string = format!("{}:{}", ccp, rule.port);
-    } else {
-        // replacing templates with actual values.
-        conn_string = rule.dst.replace("{region}", vm_region);
-        // TODO: finish replacements for {endpoint} and {id}
-    }
-
-    Ok(conn_string)
 }
