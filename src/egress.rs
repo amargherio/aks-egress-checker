@@ -1,5 +1,4 @@
 use std::env;
-use std::env::VarError;
 use anyhow::{anyhow, Result};
 use clap::ArgMatches;
 use serde::{Deserialize, Serialize};
