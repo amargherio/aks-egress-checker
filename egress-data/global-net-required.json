@@ -36,7 +36,7 @@
             "port": "53",
             "description": "If you're using custom DNS servers, you must ensure they're accessible by the cluster nodes.",
             "requiredPrivate": true,
-            "enabled": true
+            "enabled": false
         },
         {
             "name": "api-server-https-443",
