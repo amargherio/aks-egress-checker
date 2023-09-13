@@ -1,4 +1,7 @@
 mod test_target;
+mod http;
+mod tcp;
+mod udp;
 
 use std::net::SocketAddr;
 
@@ -65,7 +68,7 @@ async fn audit_group(
         if rule.rule_enabled == false {
             continue;
         } else {
-            let dest = test_target::build_conn_string(&rule, ccp, vm_region).await.unwrap();
+            let dest = self::test_target::build_conn_string(&rule, ccp, vm_region).await.unwrap();
             let addr = dest.parse::<SocketAddr>();
 
             if addr.is_err() {

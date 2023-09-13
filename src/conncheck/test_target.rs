@@ -15,7 +15,7 @@ use crate::egress::EgressRule;
 ///    The replacements for "{endpoint}" and "{id}" are still pending.
 ///
 /// This function is `async` and should be awaited to obtain the `Result<String>` containing the connection string.
-pub async fn build_conn_string(rule: &EgressRule, ccp: &str, vm_region: &str) -> Result<String> {
+pub(crate) async fn build_conn_string(rule: &EgressRule, ccp: &str, vm_region: &str) -> Result<String> {
     tracing::debug!("Building connection string for attempted FQDN and port");
     let mut conn_string: String = String::new();
 
