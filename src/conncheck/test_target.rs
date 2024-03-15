@@ -23,7 +23,7 @@ pub(crate) async fn build_conn_string(rule: &EgressRule, ccp: &str, vm_region: &
         // this wildcard is a bit...weird. this should be treated as `kubernetes.default.svc.cluster.local`
         // if the CCP FDQN isn't specified, although this could result in inaccurate connectivity tests.
         //
-        // for now the ccp-fqdn value is required but eventually we need a smarter way to determine
+        // for now the ccp-fqdn value is required, but eventually we need a smarter way to determine
         // the CCP for a given cluster.
         conn_string = format!("{}:{}", ccp, rule.port);
     } else {
@@ -33,4 +33,10 @@ pub(crate) async fn build_conn_string(rule: &EgressRule, ccp: &str, vm_region: &
     }
 
     Ok(conn_string)
+}
+
+async fn retrieve_cluster_fqdn() -> Result<String> {
+    // using the azure SDK for rust, pull the cluster information (resource ID) and query Azure
+    // to get the API server FQDN for the cluster.
+    todo!()
 }

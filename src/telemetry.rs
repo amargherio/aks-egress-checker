@@ -1,10 +1,7 @@
-use anyhow::Result;
 use clap::ArgMatches;
 use tracing_subscriber::{filter::EnvFilter, fmt, Registry, prelude::*};
 
 use std::env;
-use tracing::subscriber::set_global_default;
-use tracing_log::LogTracer;
 use tracing_subscriber::layer::SubscriberExt;
 
 pub fn configure_telemetry(matches: &ArgMatches) {
